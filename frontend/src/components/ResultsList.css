@@ -1,0 +1,151 @@
+/**
+ * 结果列表样式
+ */
+.results-list {
+  max-height: 800px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.results-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.results-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.results-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.apartment-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.apartment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.apartment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.apartment-name {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 0;
+}
+
+.top-badge {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.apartment-info {
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.info-label {
+  min-width: 80px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.info-value {
+  flex: 1;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.info-value.price {
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.info-value.commute {
+  color: #3498db;
+  font-weight: 600;
+}
+
+.info-value.commute .distance {
+  color: #999;
+  font-weight: normal;
+  font-size: 0.85rem;
+  margin-left: 5px;
+}
+
+.info-value.address {
+  color: #555;
+  line-height: 1.5;
+}
+
+.info-value.remarks {
+  color: #666;
+  font-style: italic;
+}
+
+.apartment-recommendation {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 3px solid #667eea;
+}
+
+.apartment-recommendation strong {
+  color: #667eea;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.apartment-recommendation p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.apartment-route {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #e8f4f8;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.apartment-route strong {
+  color: #3498db;
+  margin-right: 5px;
+}

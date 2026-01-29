@@ -1,0 +1,209 @@
+[
+  {
+    "id": "APT0001",
+    "name": "百思特公寓",
+    "minPrice": 2500,
+    "maxPrice": 3500,
+    "address": "北京市朝阳区化工东里3号",
+    "district": "朝阳区",
+    "remarks": "有班车，包取暖，宠物友好，可养狗和猫"
+  },
+  {
+    "id": "APT0002",
+    "name": "小鲸鱼",
+    "minPrice": 2400,
+    "maxPrice": 2800,
+    "address": "北京市朝阳区化工路甲5号附近603文化产业园",
+    "district": "朝阳区",
+    "remarks": "有阳台"
+  },
+  {
+    "id": "APT0003",
+    "name": "乐乎青年双合店",
+    "minPrice": 1800,
+    "maxPrice": 3200,
+    "address": "北京市朝阳区双合地铁站东行10米",
+    "district": "朝阳区",
+    "remarks": "近地铁，免费停车"
+  },
+  {
+    "id": "APT0004",
+    "name": "管庄壹号公寓",
+    "minPrice": 2800,
+    "maxPrice": 3500,
+    "address": "北京市朝阳区管庄南街7号",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0005",
+    "name": "造梦空间",
+    "minPrice": 1500,
+    "maxPrice": 2518,
+    "address": "北京市朝阳区朝阳路辅路与管庄路交叉口东南220米",
+    "district": "朝阳区",
+    "remarks": "loft复试"
+  },
+  {
+    "id": "APT0006",
+    "name": "锦寓",
+    "minPrice": 3000,
+    "maxPrice": 5800,
+    "address": "北京市朝阳区十里堡南里西路莱锦文化创意产业园",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0007",
+    "name": "美航公寓",
+    "minPrice": 1900,
+    "maxPrice": 2500,
+    "address": "北京市通州区永顺镇永顺西马庄甲6号美航印刷厂",
+    "district": "通州区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0008",
+    "name": "小满寓（物资学院）",
+    "minPrice": 1800,
+    "maxPrice": 2650,
+    "address": "北京市通州区兴旺北路西潞苑二街与潞通新路交叉口",
+    "district": "通州区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0009",
+    "name": "小满寓（盛世三合）",
+    "minPrice": 1900,
+    "maxPrice": 3500,
+    "address": "北京市朝阳区半壁店602号盛世三合文化产业园",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0010",
+    "name": "暖之寓",
+    "minPrice": 2700,
+    "maxPrice": 3200,
+    "address": "北京市朝阳区高碑店医药物流区1525号御河大厦A座",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0011",
+    "name": "精锐公寓",
+    "minPrice": 2000,
+    "maxPrice": 2700,
+    "address": "北京市通州区运河大街（北运河西地铁站B东北口步行450米）",
+    "district": "通州区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0012",
+    "name": "世高公寓",
+    "minPrice": 2400,
+    "maxPrice": 3000,
+    "address": "北京市朝阳区化工路与垡头路交叉口南320米",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0013",
+    "name": "璟好公寓",
+    "minPrice": 3250,
+    "maxPrice": 3850,
+    "address": "北京市朝阳区南磨房燕保百湾家园",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0014",
+    "name": "奔鑫公寓",
+    "minPrice": 3000,
+    "maxPrice": 4000,
+    "address": "北京市朝阳区大郊亭北街东18号正南方向60米",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0015",
+    "name": "盛华青年社区（王四营）",
+    "minPrice": 1600,
+    "maxPrice": 2400,
+    "address": "北京市朝阳区高碑店路与G1辅路交汇处",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0016",
+    "name": "雨禾公寓",
+    "minPrice": 2000,
+    "maxPrice": 3600,
+    "address": "北京市朝阳区京城梨园步道雨禾青年公寓",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0017",
+    "name": "佐岸酒店",
+    "minPrice": 2900,
+    "maxPrice": 4100,
+    "address": "北京市朝阳区定福家园北里1号院3号楼",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0018",
+    "name": "808产业园",
+    "minPrice": 2600,
+    "maxPrice": 2800,
+    "address": "北京市朝阳区姚家园北一路808产业园",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0019",
+    "name": "奔宝公寓",
+    "minPrice": 2500,
+    "maxPrice": 3800,
+    "address": "北京市朝阳区四路居368号",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0020",
+    "name": "月亮湾公寓",
+    "minPrice": 4000,
+    "maxPrice": 5000,
+    "address": "北京市朝阳区望京望花路西八间北里15号",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0021",
+    "name": "天坛知旅",
+    "minPrice": 3500,
+    "maxPrice": 5500,
+    "address": "北京市东城区长青南路鸿运花园",
+    "district": "东城区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0022",
+    "name": "得寓里公寓",
+    "minPrice": 2700,
+    "maxPrice": 3700,
+    "address": "北京市朝阳区武圣路松榆西里6号楼",
+    "district": "朝阳区",
+    "remarks": ""
+  },
+  {
+    "id": "APT0023",
+    "name": "万隆嘉信",
+    "minPrice": 3200,
+    "maxPrice": 4200,
+    "address": "北京市朝阳区八里庄街道延静里中街20号",
+    "district": "朝阳区",
+    "remarks": ""
+  }
+]
