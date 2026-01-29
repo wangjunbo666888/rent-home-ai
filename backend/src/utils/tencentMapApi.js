@@ -26,7 +26,7 @@ export async function calculateCommuteTime(from, to) {
   }
 
   try {
-    // 检查路线缓存
+    // 检查路线缓存（修复通勤时间后需重启后端以清空旧缓存）
     const routeKey = `${from}|||${to}`;
     if (routeCache.has(routeKey)) {
       console.log('📦 使用缓存的路线数据');
@@ -61,26 +61,18 @@ export async function calculateCommuteTime(from, to) {
       throw new Error('未找到合适的路线');
     }
 
-    // 计算总时间和距离
-    let totalDuration = 0; // 秒
-    let totalDistance = 0; // 米
-
-    if (route.steps && Array.isArray(route.steps)) {
-      route.steps.forEach(step => {
-        totalDuration += step.duration || 0;
-        totalDistance += step.distance || 0;
-      });
-    } else {
-      // 如果没有steps，使用route的总体信息
-      totalDuration = route.duration || 0;
-      totalDistance = route.distance || 0;
-    }
+    /**
+     * 腾讯地图 API 文档：route.duration 单位为「分钟」，route.distance 单位为「米」
+     * 直接使用路线顶层字段，不再对 steps 求和或除以 60（此前误把分钟当秒除 60 导致显示 0 分钟）
+     */
+    const totalDuration = Math.round(Number(route.duration) || 0);
+    const totalDistance = Number(route.distance) || 0;
 
     // 生成路线描述
     const routeDescription = generateRouteDescription(route);
 
     const result = {
-      duration: Math.round(totalDuration / 60), // 转换为分钟
+      duration: totalDuration,
       distance: totalDistance,
       route: routeDescription
     };
