@@ -41,7 +41,7 @@ export async function calculateCommuteTime(from, to) {
       throw new Error('地址解析失败，请检查地址是否正确');
     }
 
-    // 第二步：路线规划（公共交通）
+    // 第二步：路线规划（公共交通）。注：WebService 接口不支持 policy 参数，使用默认策略（时间短）
     const routeUrl = `${API_BASE_URL}/direction/v1/transit`;
     const routeResponse = await axios.get(routeUrl, {
       params: {
@@ -63,7 +63,6 @@ export async function calculateCommuteTime(from, to) {
 
     /**
      * 腾讯地图 API 文档：route.duration 单位为「分钟」，route.distance 单位为「米」
-     * 直接使用路线顶层字段，不再对 steps 求和或除以 60（此前误把分钟当秒除 60 导致显示 0 分钟）
      */
     const totalDuration = Math.round(Number(route.duration) || 0);
     const totalDistance = Number(route.distance) || 0;

@@ -53,8 +53,8 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
       continue;
     }
 
-    // 添加小延迟，避免API调用过快
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // 添加延迟，避免「此key每秒请求量已达到上限」
+    await new Promise(resolve => setTimeout(resolve, 400));
   }
 
   // 排序：优先通勤时间短，其次价格低
