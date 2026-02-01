@@ -6,7 +6,19 @@
     "maxPrice": 3500,
     "address": "北京市朝阳区化工东里3号",
     "district": "朝阳区",
-    "remarks": "有班车，包取暖，宠物友好，可养狗和猫"
+    "remarks": "有班车，包取暖，宠物友好，可养狗和猫",
+    "images": [
+      { "url": "https://picsum.photos/seed/apt001a/800/600", "title": "客厅" },
+      { "url": "https://picsum.photos/seed/apt001b/800/600", "title": "卧室" },
+      { "url": "https://picsum.photos/seed/apt001c/800/600", "title": "卫生间" }
+    ],
+    "videos": [
+      {
+        "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "title": "公寓实拍",
+        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+      }
+    ]
   },
   {
     "id": "APT0002",
@@ -15,7 +27,18 @@
     "maxPrice": 2800,
     "address": "北京市朝阳区化工路甲5号附近603文化产业园",
     "district": "朝阳区",
-    "remarks": "有阳台"
+    "remarks": "有阳台",
+    "images": [
+      { "url": "https://picsum.photos/seed/apt002a/800/600", "title": "阳台" },
+      { "url": "https://picsum.photos/seed/apt002b/800/600", "title": "厨房" }
+    ],
+    "videos": [
+      {
+        "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "title": "环境介绍",
+        "description": "园区环境与周边配套介绍。"
+      }
+    ]
   },
   {
     "id": "APT0003",
@@ -195,7 +218,24 @@
     "maxPrice": 3700,
     "address": "北京市朝阳区武圣路松榆西里6号楼",
     "district": "朝阳区",
-    "remarks": ""
+    "remarks": "",
+    "images": [
+      { "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/E2F0E460-C4B2-4C5E-A6B3-448C8C1A8C9D.JPG?q-sign-algorithm=sha1&q-ak=AKIDX-I3BH85nB5pCJY9KCDoeU-nZOHXoT8kX9U4Lrd0H-XDnFvlg3Y506b_O-NyJA-x&q-sign-time=1769940604;1769944204&q-key-time=1769940604;1769944204&q-header-list=host&q-url-param-list=&q-signature=c8968db3d1f138be58aca1ae4464148a7035bd95&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa4d012fe4a4401e3babc60722ee97dad9WamgBcI0HkUIp6i4wwTL01WuuuiHXYTGCbHesO00NphOAtO61Q8IiR7IOLVfxFVnLxnDnhJatw1yu6eDlrJNt9FhhqIrebZ2YJKiDnYRGxtE71ycjTXTkiMwIi46vMlskiSAIXZHbh0AsdAbS1JwAraLhFngnG6SUX2vXfubPMeLWzxqetodUYgVOArPYDAmhqAPKE2zcSm7aHk_GgkDhoEdZt57YCOVTJw4LQZ50dGQmGX4UZbLh9YXZrkgjlID8c_0z18lCmkuUh-HJDHgfA", "title": "客厅" },
+      { "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/F1C504A4-649E-4FC4-B606-9B997172E9BA.JPG?q-sign-algorithm=sha1&q-ak=AKID50aeq7yvuaLquOQqPzOkzr9ZAYeYl9FwNsdymF1-0QfEqCKevrcelngLn-c69CyZ&q-sign-time=1769940637;1769944237&q-key-time=1769940637;1769944237&q-header-list=host&q-url-param-list=&q-signature=93c1df85e65dec74b698e81503a93601e5e68a55&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa15191363017a754a8d33fb98570b4b1eWamgBcI0HkUIp6i4wwTL02ebcG6B9qq8HiX6vEsDCEv51Nt-UCFLu5Q3ALG4CAtSMTtXIFvFkV1MdVou_lGcYu27EVsXc27N9mWt1I1yoz-EognSonUhejK6JvxxSlyONRFIyTlEvxvF8uxRvcvcvAEJJC7ntckWC9MnPrd1_awVbfMELvdAhv358EJT64axXzWrpA2n7M90rEIncrDPDjpqGfmjXd6eC5v_wz2jnznoUnJnGV8Xl4IvH6gCTyKVlI-1r-MqkJVt13Z1F80Hdw", "title": "卧室" },
+      { "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/IMG_2777_VSCO%202.JPG?q-sign-algorithm=sha1&q-ak=AKID9nPak9I7Ja4pNapl_cQCvAzf8ALgK6XtkDyB2mWiPrCo6dy-JXllxRksYslB-8QD&q-sign-time=1769940659;1769944259&q-key-time=1769940659;1769944259&q-header-list=host&q-url-param-list=&q-signature=3068952157402e384f3a031bf71c10492217b7b9&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa3c8d6ee2587da54f198d7fc0a5d82147WamgBcI0HkUIp6i4wwTL01DVrIM-1ZmNyJpWe_0KrzeIGgmw2_pHHSSgUw_FAyTi9uTiwYQ7x2Hy1DrSMXD_YSDwfQrCxRM2hSRey4j0kTYtVffQaRoP8FKHZo7lAvtq_fF58ohGagkHHb01WBArJPa5sCIuDFfDWyuv12pgVWVNo_xEtgQesgo1ghfki_NL7xgx9rogvuqOmFqBTXDuwBvtKyvLVd3YK_GTkeNGyFSAeLJ8gJ4ma94qESfnkONyRGIrWMzycfr2hPvC64Aiww", "title": "卫生间" }
+    ],
+    "videos": [
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/%E4%BD%8E%E4%BB%B7%E9%AB%98%E5%93%81-1.MOV?q-sign-algorithm=sha1&q-ak=AKIDBiZMA8fZKOkM6KnioVibJDSFmeUEb0PxnXUeUjVj8OYiVy9qXDKzGtgCUJh7TIHG&q-sign-time=1769940680;1769944280&q-key-time=1769940680;1769944280&q-header-list=host&q-url-param-list=&q-signature=88d6d5d0ba3437ca8750e3e3a04cc705df932958&x-cos-security-token=AaZXhO1zx0PE5AFUdOpisKoQVgH6ZL0afd8cf5ffc3659edaccadbc93deaab19bp4WAmzZYnxHaDxHzteQYX8RgjEmU-tvLkkuzNVrnFspubgLU-oGu5Rx4bRBXiJTSuvluHWstcr-_kUrMNb1EiglQmH-ovplbfKRCcBGpyYv2Vml-eBxjRe2942OtVwhB14XwyzPeHZuqWC5K3cxJJ3tKo5BEvs2tJ24zMKLtDcKSd-rnLegQcEXsZ6zHe4Pw3PSse8iG-QQelHBtdYW5ATyZHnyJcVHRN59hqsP6d5jzvN18AmjtQ6xd5W9Dqnairp4A0ttuVnqQQ984D7U8ZA",
+        "title": "公寓实拍",
+        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+      },
+      {
+        "url":"https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/%E4%BD%8E%E4%BB%B7%E9%AB%98%E5%93%81-3.MOV?q-sign-algorithm=sha1&q-ak=AKIDTLLreoAEDCYe6CrUvCe8WGTHixo5T70Io_j-SoY8Og8_R-8gkEDVLGG97SH990ar&q-sign-time=1769940858;1769944458&q-key-time=1769940858;1769944458&q-header-list=host&q-url-param-list=&q-signature=4d063acca90f7a060d06cbc526a8c88f998e3cb2&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa7b70f2d41b41ff37ab81f461665a6e19WamgBcI0HkUIp6i4wwTL03G_XefNkIwbkrxxUQCje-VK9a7jHYMlhorX0TfdLrHHuC0O_wj1wxkJoP--0o4Hu7W4z0v7EjbJJg-mA599s95_gBEgCXIqUE2teoojimhVDNAf0aNmE_iycTAOuAlr8yZnxnCXTa2WFGSD4JX8M0BNwM_13K5OLlQuNN6I-Y_3N_40tfxhyFypMOwQ8pRC1joa6YiXXbcfm0b7ZfWZ6SQWKvB4Evb8EKAIPN-3t37uK2TOGF-SL08q2EnSU83UDQ",
+        "title": "公寓实拍",
+        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+      }
+    ]
   },
   {
     "id": "APT0023",

@@ -150,3 +150,27 @@
   margin-right: 5px;
 }
 
+.apartment-media-entry {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-view-media {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-view-media:hover {
+  background: #5568d3;
+}
+

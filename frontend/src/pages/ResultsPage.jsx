@@ -52,7 +52,7 @@ function ResultsPage() {
               </div>
               <div className="results-content">
                 <div className="results-list-wrap">
-                  <ResultsList results={results} />
+                  <ResultsList results={results} searchParams={searchParams} />
                 </div>
                 <div className="results-map">
                   <MapViewSafe results={results} workAddress={searchParams?.workAddress} />

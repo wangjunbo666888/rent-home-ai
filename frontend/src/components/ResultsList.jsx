@@ -1,10 +1,12 @@
 /**
  * 结果列表组件
- * 展示匹配到的公寓列表
+ * 展示匹配到的公寓列表，支持跳转至媒体详情页查看图片与视频
  */
+import { useNavigate } from 'react-router-dom';
 import './ResultsList.css';
 
-function ResultsList({ results }) {
+function ResultsList({ results, searchParams }) {
+  const navigate = useNavigate();
   const list = Array.isArray(results) ? results : [];
   if (list.length === 0) {
     return (
@@ -101,6 +103,16 @@ function ResultsList({ results }) {
                 <span>{apartment.commuteRoute}</span>
               </div>
             )}
+
+            <div className="apartment-media-entry">
+              <button
+                type="button"
+                className="btn-view-media"
+                onClick={() => navigate('/results/media', { state: { apartment, results, searchParams } })}
+              >
+                📷 查看图片与视频
+              </button>
+            </div>
           </div>
         );
       })}
