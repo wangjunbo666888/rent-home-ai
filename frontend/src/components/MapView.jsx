@@ -33,14 +33,23 @@ function MapView({ results, workAddress, workLocation }) {
       try {
         if (!mapContainer.current || !window.TMap) return;
 
-        // 创建地图实例：高清屏使用 scale 提升画质，确保容器已有尺寸
+        const TMap = window.TMap;
+        const defaultCenter = new TMap.LatLng(39.908823, 116.397470);
+        const workCenter =
+          workLocation && typeof workLocation.lat === 'number' && typeof workLocation.lng === 'number'
+            ? new TMap.LatLng(workLocation.lat, workLocation.lng)
+            : defaultCenter;
+
+        // 创建地图实例：有上班地点时以上班地点为中心，否则用默认中心；高清屏使用 scale 提升画质
         if (!mapInstance.current) {
           const scale = getMapScale();
-          mapInstance.current = new window.TMap.Map(mapContainer.current, {
-            center: new window.TMap.LatLng(39.908823, 116.397470),
+          mapInstance.current = new TMap.Map(mapContainer.current, {
+            center: workCenter,
             zoom: 12,
             scale,
           });
+        } else if (workLocation && typeof workLocation.lat === 'number' && typeof workLocation.lng === 'number') {
+          mapInstance.current.setCenter(workCenter);
         }
 
         // GL 版使用 MultiMarker，先销毁旧图层
@@ -53,7 +62,6 @@ function MapView({ results, workAddress, workLocation }) {
 
         if (results.length === 0 && !workAddress && !workLocation) return;
 
-        const TMap = window.TMap;
         const prevTip = mapContainer.current?.querySelector('.map-geocoder-tip');
         if (prevTip) prevTip.remove();
 
