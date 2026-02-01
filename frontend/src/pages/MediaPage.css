@@ -173,13 +173,13 @@
 }
 
 .media-video-list {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
 }
 
 .media-card-video {
-  padding-bottom: 16px;
+  padding-bottom: 0;
 }
 
 .media-card-video .media-card-preview {
@@ -191,26 +191,4 @@
   margin: 0;
   font-size: 1.1rem;
   color: #333;
-}
-
-.media-video-description {
-  margin: 12px 14px 16px;
-  padding: 12px;
-  background: #fff9e6;
-  border-radius: 8px;
-  border-left: 4px solid #f0c000;
-}
-
-.media-video-description strong {
-  display: block;
-  margin-bottom: 6px;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.media-video-description p {
-  margin: 0;
-  color: #555;
-  font-size: 0.9rem;
-  line-height: 1.6;
 }

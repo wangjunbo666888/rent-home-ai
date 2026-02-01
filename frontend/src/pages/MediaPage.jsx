@@ -1,6 +1,6 @@
 /**
  * 媒体详情独立页
- * 展示指定公寓的图片与视频，支持下载；视频带说明备注
+ * 展示指定公寓的图片与视频，支持下载
  */
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -155,7 +155,6 @@ function MediaPage() {
                   {videos.map((item, index) => {
                     const url = item.url || item;
                     const title = typeof item === 'object' ? item.title : null;
-                    const description = typeof item === 'object' ? item.description : null;
                     const label = title || `视频${index + 1}`;
                     const ext = (url.split('.').pop() || 'mp4').split('?')[0];
                     const filename = `${safeName}-${label}.${ext}`;
@@ -165,12 +164,6 @@ function MediaPage() {
                           <video src={url} controls preload="metadata" poster="" />
                         </div>
                         {title && <h3 className="media-video-title">{title}</h3>}
-                        {description && (
-                          <div className="media-video-description">
-                            <strong>视频说明：</strong>
-                            <p>{description}</p>
-                          </div>
-                        )}
                         <button
                           type="button"
                           className="btn-download"
