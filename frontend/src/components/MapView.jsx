@@ -25,6 +25,7 @@ function MapView({ results, workAddress, workLocation }) {
   const mapContainer = useRef(null);
   const mapInstance = useRef(null);
   const multiMarkerRef = useRef(null);
+  const multiLabelRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,6 +60,12 @@ function MapView({ results, workAddress, workLocation }) {
             multiMarkerRef.current = null;
           } catch (e) {}
         }
+        if (multiLabelRef.current) {
+          try {
+            multiLabelRef.current.setMap(null);
+            multiLabelRef.current = null;
+          } catch (e) {}
+        }
 
         if (results.length === 0 && !workAddress && !workLocation) return;
 
@@ -85,28 +92,55 @@ function MapView({ results, workAddress, workLocation }) {
           geometries: [],
         });
 
-        function addWorkMarker(lat, lng) {
-          if (cancelled || !multiMarkerRef.current) return;
-          multiMarkerRef.current.add([
-            {
-              id: 'work-1',
-              styleId: 'work',
-              position: new TMap.LatLng(lat, lng),
-              properties: { title: '上班地点' },
+        // 创建 MultiLabel 图层：在标记下方显示「上班地点」或公寓名称
+        if (TMap.MultiLabel && TMap.LabelStyle) {
+          multiLabelRef.current = new TMap.MultiLabel({
+            map: mapInstance.current,
+            styles: {
+              work: new TMap.LabelStyle({
+                color: '#c0392b',
+                size: 12,
+                offset: { x: 0, y: 6 },
+                alignment: 'center',
+                verticalAlignment: 'top',
+              }),
+              apartment: new TMap.LabelStyle({
+                color: '#2980b9',
+                size: 12,
+                offset: { x: 0, y: 6 },
+                alignment: 'center',
+                verticalAlignment: 'top',
+              }),
             },
-          ]);
+            geometries: [],
+          });
         }
 
-        function addApartmentMarker(index, lat, lng) {
+        function addWorkMarker(lat, lng) {
           if (cancelled || !multiMarkerRef.current) return;
+          const position = new TMap.LatLng(lat, lng);
           multiMarkerRef.current.add([
-            {
-              id: 'apt-' + index,
-              styleId: 'apartment',
-              position: new TMap.LatLng(lat, lng),
-              properties: { title: '推荐公寓' },
-            },
+            { id: 'work-1', styleId: 'work', position, properties: { title: '上班地点' } },
           ]);
+          if (multiLabelRef.current) {
+            multiLabelRef.current.add([
+              { id: 'work-label-1', styleId: 'work', position, content: '上班地点' },
+            ]);
+          }
+        }
+
+        function addApartmentMarker(index, lat, lng, name) {
+          if (cancelled || !multiMarkerRef.current) return;
+          const position = new TMap.LatLng(lat, lng);
+          const label = (name && String(name).trim()) ? String(name).trim() : '推荐公寓';
+          multiMarkerRef.current.add([
+            { id: 'apt-' + index, styleId: 'apartment', position, properties: { title: label } },
+          ]);
+          if (multiLabelRef.current) {
+            multiLabelRef.current.add([
+              { id: 'apt-label-' + index, styleId: 'apartment', position, content: label },
+            ]);
+          }
         }
 
         // 优先使用后端返回的坐标打点，避免前端 Geocoder 触发「此key每秒请求量已达到上限」
@@ -116,7 +150,7 @@ function MapView({ results, workAddress, workLocation }) {
 
         results.forEach((apartment, index) => {
           if (typeof apartment?.lat === 'number' && typeof apartment?.lng === 'number') {
-            addApartmentMarker(index, apartment.lat, apartment.lng);
+            addApartmentMarker(index, apartment.lat, apartment.lng, apartment.name);
           }
         });
 
@@ -167,7 +201,7 @@ function MapView({ results, workAddress, workLocation }) {
               if (cancelled || !mapInstance.current) return;
               try {
                 const loc = getLocationFromResult(result);
-                if (loc) addApartmentMarker(index, loc.lat, loc.lng);
+                if (loc) addApartmentMarker(index, loc.lat, loc.lng, apartment.name);
               } catch (e) {
                 console.warn('添加公寓标记失败:', e);
               }
@@ -195,6 +229,10 @@ function MapView({ results, workAddress, workLocation }) {
           try { multiMarkerRef.current.setMap(null); } catch (e) {}
           multiMarkerRef.current = null;
         }
+        if (multiLabelRef.current) {
+          try { multiLabelRef.current.setMap(null); } catch (e) {}
+          multiLabelRef.current = null;
+        }
       };
     }
 
@@ -209,6 +247,10 @@ function MapView({ results, workAddress, workLocation }) {
       if (multiMarkerRef.current) {
         try { multiMarkerRef.current.setMap(null); } catch (e) {}
         multiMarkerRef.current = null;
+      }
+      if (multiLabelRef.current) {
+        try { multiLabelRef.current.setMap(null); } catch (e) {}
+        multiLabelRef.current = null;
       }
     };
   }, [results, workAddress, workLocation]);
