@@ -15,6 +15,7 @@ import { calculateCommuteTime } from '../utils/tencentMapApi.js';
  */
 export async function matchApartments({ workAddress, commuteTime, budget, apartments }) {
   const results = [];
+  let workLocation = null;
   let processedCount = 0;
 
   console.log(`📊 开始处理 ${apartments.length} 个公寓...`);
@@ -36,12 +37,17 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
       
       // 通勤时间筛选
       if (commuteInfo.duration <= commuteTime) {
+        if (!workLocation && commuteInfo.fromCoord) {
+          workLocation = commuteInfo.fromCoord;
+        }
         results.push({
           ...apartment,
           commuteTime: commuteInfo.duration,
           commuteDistance: commuteInfo.distance,
           commuteRoute: commuteInfo.route,
-          recommendation: generateRecommendation(apartment, commuteInfo, budget)
+          recommendation: generateRecommendation(apartment, commuteInfo, budget),
+          lat: commuteInfo.toCoord?.lat,
+          lng: commuteInfo.toCoord?.lng
         });
         console.log(`✅ [${processedCount}/${apartments.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，符合条件`);
       } else {
@@ -65,7 +71,7 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
     return a.minPrice - b.minPrice;
   });
 
-  return results;
+  return { results, workLocation };
 }
 
 /**

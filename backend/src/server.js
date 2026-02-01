@@ -65,8 +65,8 @@ app.post('/api/match', async (req, res) => {
 
     console.log(`🔍 开始匹配：上班地址=${workAddress}, 通勤时长≤${commuteTime}分钟, 预算≤${budget}元`);
 
-    // 执行匹配
-    const results = await matchApartments({
+    // 执行匹配（返回 results 与 workLocation 供地图打点）
+    const { results, workLocation } = await matchApartments({
       workAddress,
       commuteTime: parseInt(commuteTime),
       budget: parseInt(budget),
@@ -78,7 +78,8 @@ app.post('/api/match', async (req, res) => {
     res.json({
       success: true,
       data: results,
-      total: results.length
+      total: results.length,
+      workLocation: workLocation || null
     });
 
   } catch (error) {

@@ -3,7 +3,7 @@
  * 展示指定公寓的图片与视频，支持下载
  */
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import '../App.css';
 import './MediaPage.css';
 
@@ -32,11 +32,8 @@ function handleDownload(url, filename) {
 
 function MediaPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const state = location.state || {};
   const apartment = state.apartment || null;
-  const results = state.results || [];
-  const searchParams = state.searchParams || null;
 
   const [activeTab, setActiveTab] = useState('images');
 
@@ -46,27 +43,19 @@ function MediaPage() {
   const hasVideos = videos.length > 0;
   const hasMedia = hasImages || hasVideos;
 
-  const backToResults = () => {
-    navigate('/results', { state: { results, searchParams } });
-  };
-
   if (!apartment) {
     return (
       <div className="app media-page">
         <header className="app-header media-page-header">
           <div className="media-page-header-inner">
-            <button type="button" className="back-to-home" onClick={() => navigate('/')}>
-              ← 返回首页
-            </button>
-            <h1>媒体详情</h1>
+            <div className="media-page-title-wrap">
+              <h1>媒体详情</h1>
+            </div>
           </div>
         </header>
         <main className="app-main">
           <div className="media-empty-state">
             <p>未选择公寓，请从结果列表进入</p>
-            <button type="button" className="btn-primary" onClick={backToResults}>
-              返回结果列表
-            </button>
           </div>
         </main>
       </div>
@@ -79,9 +68,6 @@ function MediaPage() {
     <div className="app media-page">
       <header className="app-header media-page-header">
         <div className="media-page-header-inner">
-          <button type="button" className="back-to-home" onClick={backToResults} aria-label="返回结果列表">
-            ← 返回结果列表
-          </button>
           <div className="media-page-title-wrap">
             <h1>📷 {apartment.name} - 图片与视频</h1>
             <p>查看并下载公寓实拍图片与视频</p>
@@ -93,9 +79,6 @@ function MediaPage() {
         {!hasMedia ? (
           <div className="media-empty-state">
             <p>该公寓暂无图片或视频</p>
-            <button type="button" className="btn-primary" onClick={backToResults}>
-              返回结果列表
-            </button>
           </div>
         ) : (
           <>

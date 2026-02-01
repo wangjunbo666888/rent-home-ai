@@ -36,6 +36,7 @@ function HomePage() {
           state: {
             results: list,
             searchParams: params,
+            workLocation: data.workLocation || null,
           },
         });
       } else {

@@ -1,6 +1,5 @@
 /**
  * 结果页样式
- * 含左上角返回按钮、标题区域布局
  */
 
 .results-page-header {
@@ -14,27 +13,6 @@
   align-items: flex-start;
   gap: 20px;
   flex-wrap: wrap;
-}
-
-.back-to-home {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.back-to-home:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  color: white;
 }
 
 .results-page-title-wrap {
@@ -57,22 +35,6 @@
 }
 
 .results-empty p {
-  margin-bottom: 20px;
+  margin-bottom: 0;
   font-size: 1.1rem;
-}
-
-.back-to-home-inline {
-  display: inline-block;
-  padding: 10px 20px;
-  background: #667eea;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.back-to-home-inline:hover {
-  background: #5568d3;
-  color: white;
 }

@@ -1,8 +1,8 @@
 /**
  * 结果页：展示匹配的公寓列表与地图
- * 左上角提供返回首页按钮；数据来自首页跳转时传入的 state
+ * 数据来自首页跳转时传入的 state
  */
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import ResultsList from '../components/ResultsList';
 import MapViewSafe from '../components/MapViewSafe';
 import '../App.css';
@@ -13,15 +13,13 @@ function ResultsPage() {
   const state = location.state || {};
   const results = state.results || [];
   const searchParams = state.searchParams || null;
+  const workLocation = state.workLocation || null;
   const hasData = results.length > 0;
 
   return (
     <div className="app results-page">
       <header className="app-header results-page-header">
         <div className="results-page-header-inner">
-          <Link to="/" className="back-to-home" aria-label="返回首页">
-            ← 返回首页
-          </Link>
           <div className="results-page-title-wrap">
             <h1>🏠 智能租房匹配系统</h1>
             <p>根据上班地点、通勤时长和预算，智能匹配最适合的公寓</p>
@@ -32,10 +30,7 @@ function ResultsPage() {
       <main className="app-main">
         {!hasData ? (
           <div className="results-empty">
-            <p>暂无匹配结果，请返回首页重新搜索</p>
-            <Link to="/" className="back-to-home-inline">
-              ← 返回首页
-            </Link>
+            <p>暂无匹配结果</p>
           </div>
         ) : (
           <>
@@ -55,7 +50,7 @@ function ResultsPage() {
                   <ResultsList results={results} searchParams={searchParams} />
                 </div>
                 <div className="results-map">
-                  <MapViewSafe results={results} workAddress={searchParams?.workAddress} />
+                  <MapViewSafe results={results} workAddress={searchParams?.workAddress} workLocation={workLocation} />
                 </div>
               </div>
             </div>

@@ -15,10 +15,10 @@ const geocodeCache = new Map();
 const routeCache = new Map();
 
 /**
- * 计算通勤时间（公共交通）
+ * 计算通勤时间（公共交通），并返回起终点坐标供地图打点使用
  * @param {string} from - 起点地址
  * @param {string} to - 终点地址
- * @returns {Promise<Object>} 通勤信息 { duration: 分钟, distance: 米, route: 路线描述 }
+ * @returns {Promise<Object>} 通勤信息 { duration, distance, route, fromCoord, toCoord }
  */
 export async function calculateCommuteTime(from, to) {
   if (!TENCENT_MAP_KEY) {
@@ -30,7 +30,13 @@ export async function calculateCommuteTime(from, to) {
     const routeKey = `${from}|||${to}`;
     if (routeCache.has(routeKey)) {
       console.log('📦 使用缓存的路线数据');
-      return routeCache.get(routeKey);
+      const cached = routeCache.get(routeKey);
+      if (cached.fromCoord && cached.toCoord) return cached;
+      const fromCoord = await geocodeWithCache(from);
+      const toCoord = await geocodeWithCache(to);
+      const result = { ...cached, fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng }, toCoord: { lat: toCoord.lat, lng: toCoord.lng } };
+      routeCache.set(routeKey, result);
+      return result;
     }
 
     // 第一步：地理编码（地址转坐标）- 使用缓存
@@ -73,7 +79,9 @@ export async function calculateCommuteTime(from, to) {
     const result = {
       duration: totalDuration,
       distance: totalDistance,
-      route: routeDescription
+      route: routeDescription,
+      fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng },
+      toCoord: { lat: toCoord.lat, lng: toCoord.lng }
     };
 
     // 缓存结果
