@@ -7,6 +7,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { matchApartments } from './services/matchingService.js';
 import { loadApartments } from './utils/dataLoader.js';
+import { getSuggestion } from './utils/tencentMapApi.js';
 
 // 加载环境变量
 dotenv.config();
@@ -87,6 +88,29 @@ app.post('/api/match', async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || '匹配过程中发生错误'
+    });
+  }
+});
+
+/**
+ * 上班地址输入提示（联想）
+ * GET /api/suggestion?keyword=亮马河&region=北京市
+ */
+app.get('/api/suggestion', async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const region = req.query.region || '北京市';
+    if (!keyword || typeof keyword !== 'string') {
+      return res.json({ success: true, data: [] });
+    }
+    const data = await getSuggestion(keyword, region);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('❌ 输入提示失败:', error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || '输入提示请求失败',
+      data: []
     });
   }
 });

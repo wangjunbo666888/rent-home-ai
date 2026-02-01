@@ -169,3 +169,33 @@ function generateRouteDescription(route) {
 
   return descriptions.length > 0 ? descriptions.join(' → ') : '公共交通';
 }
+
+/**
+ * 关键词输入提示（地址联想）
+ * @param {string} keyword - 搜索关键字
+ * @param {string} [region='北京市'] - 搜索范围/城市名
+ * @returns {Promise<Array>} 建议列表，每项含 id, title, address, location 等
+ */
+export async function getSuggestion(keyword, region = '北京市') {
+  if (!TENCENT_MAP_KEY) {
+    throw new Error('腾讯地图API密钥未配置，请在.env文件中设置TENCENT_MAP_KEY');
+  }
+  if (!keyword || typeof keyword !== 'string' || !keyword.trim()) {
+    return [];
+  }
+  const url = `${API_BASE_URL}/place/v1/suggestion`;
+  const response = await axios.get(url, {
+    params: {
+      key: TENCENT_MAP_KEY,
+      keyword: keyword.trim(),
+      region: region || '北京市',
+      region_fix: 0,
+      page_size: 10
+    }
+  });
+  if (response.data.status !== 0) {
+    throw new Error(response.data.message || '输入提示请求失败');
+  }
+  const list = response.data.data || [];
+  return Array.isArray(list) ? list : [];
+}

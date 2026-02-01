@@ -36,13 +36,8 @@
 }
 
 .legend-icon {
-  font-size: 1.2rem;
-}
-
-.work-icon {
-  color: #e74c3c;
-}
-
-.apartment-icon {
-  color: #3498db;
+  width: 20px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
 }

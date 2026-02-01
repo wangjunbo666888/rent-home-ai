@@ -49,6 +49,73 @@
   font-size: 0.85rem;
 }
 
+/* 上班地址联想 */
+.form-group-address .address-input-wrap {
+  position: relative;
+}
+
+.form-group-address .address-input-wrap input {
+  margin-bottom: 0;
+}
+
+.address-loading {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: #999;
+  pointer-events: none;
+}
+
+.address-suggestion-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: white;
+  border: 2px solid #667eea;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.address-suggestion-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+
+.address-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.address-suggestion-item:hover {
+  background: #f5f5ff;
+}
+
+.suggestion-title {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.suggestion-address {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
 .search-button {
   width: 100%;
   padding: 15px;

@@ -251,11 +251,11 @@ function MapView({ results, workAddress, workLocation }) {
       <div ref={mapContainer} className="map-container" />
       <div className="map-legend">
         <div className="legend-item">
-          <span className="legend-icon work-icon">📍</span>
+          <img src={WORK_MARKER_SVG} alt="" className="legend-icon" aria-hidden />
           <span>上班地点</span>
         </div>
         <div className="legend-item">
-          <span className="legend-icon apartment-icon">🏠</span>
+          <img src={APARTMENT_MARKER_SVG} alt="" className="legend-icon" aria-hidden />
           <span>推荐公寓</span>
         </div>
       </div>
