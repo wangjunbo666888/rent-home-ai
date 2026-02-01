@@ -1,13 +1,16 @@
 /**
  * 后端服务器入口文件
- * 提供API接口用于租房匹配
+ * 提供API接口用于租房匹配及管理端
  */
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import { matchApartments } from './services/matchingService.js';
 import { loadApartments, saveApartments } from './utils/dataLoader.js';
 import { getSuggestion } from './utils/tencentMapApi.js';
+import { uploadToCos } from './utils/cosUpload.js';
+import { BEIJING_DISTRICTS } from './constants/districts.js';
 
 // 加载环境变量
 dotenv.config();
@@ -18,6 +21,9 @@ const PORT = process.env.PORT || 3001;
 // 中间件
 app.use(cors());
 app.use(express.json());
+
+/** 文件上传：内存存储，供 COS 上传使用 */
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 // 加载公寓数据
 let apartmentsData = [];
@@ -153,6 +159,50 @@ function nextApartmentId(list) {
   return 'APT' + String(max + 1).padStart(4, '0');
 }
 
+/**
+ * 同一区域内公寓名称是否重复（排除指定 id，编辑时用）
+ * @param {string} name - 公寓名称
+ * @param {string} district - 区域
+ * @param {string} [excludeId] - 排除的公寓 ID（编辑时传当前 id）
+ * @returns {boolean}
+ */
+function isDuplicateName(name, district, excludeId) {
+  const n = (name || '').trim();
+  const d = (district || '').trim();
+  if (!n || !d) return false;
+  return apartmentsData.some(
+    a => a.id !== excludeId && (a.district || '').trim() === d && (a.name || '').trim() === n
+  );
+}
+
+/** 管理端 - 获取北京区域下拉列表 */
+app.get('/api/admin/districts', (req, res) => {
+  res.json({ success: true, data: BEIJING_DISTRICTS });
+});
+
+/** 管理端 - 检查同一区域内公寓名是否重复 */
+app.post('/api/admin/apartments/check-name', (req, res) => {
+  const { name, district, id: excludeId } = req.body || {};
+  const duplicate = isDuplicateName(name, district, excludeId);
+  res.json({ success: true, duplicate });
+});
+
+/** 管理端 - 上传文件到腾讯云 COS（图片或视频） */
+app.post('/api/admin/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ success: false, message: '请选择文件' });
+    }
+    const type = (req.body && req.body.type) || 'image'; // image | video
+    const prefix = type === 'video' ? 'apartments/videos/' : 'apartments/images/';
+    const { url } = await uploadToCos(req.file.buffer, req.file.originalname, prefix);
+    res.json({ success: true, url });
+  } catch (error) {
+    console.error('❌ 上传失败:', error);
+    res.status(500).json({ success: false, message: error.message || '上传失败' });
+  }
+});
+
 /** 管理端 - 获取公寓列表 */
 app.get('/api/admin/apartments', (req, res) => {
   res.json({
@@ -175,6 +225,17 @@ app.get('/api/admin/apartments/:id', (req, res) => {
 app.post('/api/admin/apartments', async (req, res) => {
   try {
     const body = req.body || {};
+    const minPrice = Number(body.minPrice);
+    const maxPrice = Number(body.maxPrice);
+    if (Number.isNaN(minPrice) || minPrice < 0 || Number.isNaN(maxPrice) || maxPrice < 0) {
+      return res.status(400).json({ success: false, message: '月租请输入有效数字且不能为负数' });
+    }
+    if (minPrice > maxPrice) {
+      return res.status(400).json({ success: false, message: '最低月租不能大于最高月租' });
+    }
+    if (isDuplicateName(body.name, body.district)) {
+      return res.status(400).json({ success: false, message: '公寓名称重复，同一区域内不能重名' });
+    }
     const id = body.id || nextApartmentId(apartmentsData);
     if (apartmentsData.some(a => a.id === id)) {
       return res.status(400).json({ success: false, message: 'ID 已存在' });
@@ -182,8 +243,8 @@ app.post('/api/admin/apartments', async (req, res) => {
     const newItem = {
       id,
       name: body.name ?? '',
-      minPrice: Number(body.minPrice) || 0,
-      maxPrice: Number(body.maxPrice) || 0,
+      minPrice,
+      maxPrice,
       address: body.address ?? '',
       district: body.district ?? '',
       remarks: body.remarks ?? '',
@@ -208,13 +269,26 @@ app.put('/api/admin/apartments/:id', async (req, res) => {
       return res.status(404).json({ success: false, message: '公寓不存在' });
     }
     const body = req.body || {};
+    const minPrice = body.minPrice !== undefined ? Number(body.minPrice) : apartmentsData[idx].minPrice;
+    const maxPrice = body.maxPrice !== undefined ? Number(body.maxPrice) : apartmentsData[idx].maxPrice;
+    if (Number.isNaN(minPrice) || minPrice < 0 || Number.isNaN(maxPrice) || maxPrice < 0) {
+      return res.status(400).json({ success: false, message: '月租请输入有效数字且不能为负数' });
+    }
+    if (minPrice > maxPrice) {
+      return res.status(400).json({ success: false, message: '最低月租不能大于最高月租' });
+    }
+    const name = body.name !== undefined ? body.name : apartmentsData[idx].name;
+    const district = body.district !== undefined ? body.district : apartmentsData[idx].district;
+    if (isDuplicateName(name, district, req.params.id)) {
+      return res.status(400).json({ success: false, message: '公寓名称重复，同一区域内不能重名' });
+    }
     const updated = {
       ...apartmentsData[idx],
-      name: body.name !== undefined ? body.name : apartmentsData[idx].name,
-      minPrice: body.minPrice !== undefined ? Number(body.minPrice) : apartmentsData[idx].minPrice,
-      maxPrice: body.maxPrice !== undefined ? Number(body.maxPrice) : apartmentsData[idx].maxPrice,
+      name,
+      minPrice,
+      maxPrice,
       address: body.address !== undefined ? body.address : apartmentsData[idx].address,
-      district: body.district !== undefined ? body.district : apartmentsData[idx].district,
+      district,
       remarks: body.remarks !== undefined ? body.remarks : apartmentsData[idx].remarks,
       images: Array.isArray(body.images) ? body.images : (apartmentsData[idx].images || []),
       videos: Array.isArray(body.videos) ? body.videos : (apartmentsData[idx].videos || [])

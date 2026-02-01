@@ -15,6 +15,21 @@ const geocodeCache = new Map();
 const routeCache = new Map();
 
 /**
+ * 获取「当天北京时间中午12点」的 Unix 时间戳（秒）
+ * 用于公交路线规划，避免深夜/凌晨公交停运导致通勤时间异常
+ * @returns {number}
+ */
+function getBeijingNoonTimestamp() {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth();
+  const day = d.getUTCDate();
+  // 12:00 北京时间 = 04:00 UTC（东八区）
+  const noonBeijing = new Date(Date.UTC(y, m, day, 4, 0, 0, 0));
+  return Math.floor(noonBeijing.getTime() / 1000);
+}
+
+/**
  * 计算通勤时间（公共交通），并返回起终点坐标供地图打点使用
  * @param {string} from - 起点地址
  * @param {string} to - 终点地址
@@ -26,7 +41,7 @@ export async function calculateCommuteTime(from, to) {
   }
 
   try {
-    // 检查路线缓存（修复通勤时间后需重启后端以清空旧缓存）
+    // 检查路线缓存（修改出发时间或修复通勤逻辑后建议重启后端以清空旧缓存）
     const routeKey = `${from}|||${to}`;
     if (routeCache.has(routeKey)) {
       console.log('📦 使用缓存的路线数据');
@@ -47,14 +62,16 @@ export async function calculateCommuteTime(from, to) {
       throw new Error('地址解析失败，请检查地址是否正确');
     }
 
-    // 第二步：路线规划（公共交通）。注：WebService 接口不支持 policy 参数，使用默认策略（时间短）
+    // 第二步：路线规划（公共交通）。固定出发时间为北京时间中午12点，避免深夜公交停运导致路线异常（如通勤240分钟）
+    const departureTime = getBeijingNoonTimestamp();
     const routeUrl = `${API_BASE_URL}/direction/v1/transit`;
     const routeResponse = await axios.get(routeUrl, {
       params: {
         key: TENCENT_MAP_KEY,
         from: `${fromCoord.lat},${fromCoord.lng}`,
         to: `${toCoord.lat},${toCoord.lng}`,
-        output: 'json'
+        output: 'json',
+        departure_time: departureTime
       }
     });
 
@@ -189,7 +206,7 @@ export async function getSuggestion(keyword, region = '北京市') {
       key: TENCENT_MAP_KEY,
       keyword: keyword.trim(),
       region: region || '北京市',
-      region_fix: 0,
+      region_fix: 1, // 1=仅限当前城市，不扩大到全国；0=当前城市无结果时扩大到全国
       page_size: 10
     }
   });

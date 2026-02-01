@@ -62,11 +62,75 @@
 }
 
 .form-row input,
-.form-row textarea {
+.form-row textarea,
+.form-row select {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
+}
+
+.form-row select {
+  cursor: pointer;
+  min-width: 160px;
+}
+
+/* 地址联想 */
+.address-input-wrap {
+  position: relative;
+}
+
+.address-input-wrap input {
+  width: 100%;
+}
+
+.address-loading {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #888;
+}
+
+.address-suggestion-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.address-suggestion-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.address-suggestion-item:hover {
+  background: #f5f5f5;
+}
+
+.suggestion-title {
+  font-weight: 500;
+  color: #333;
+}
+
+.suggestion-address {
+  font-size: 12px;
+  color: #666;
 }
 
 .form-row textarea {
@@ -86,13 +150,164 @@
   gap: 6px;
 }
 
-.form-json {
-  font-size: 13px;
+/* 图片/视频上传 */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.form-hint {
+.upload-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #ecf0f1;
+  color: #2c3e50;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px dashed #bdc3c7;
+  width: fit-content;
+}
+
+.upload-btn:hover {
+  background: #dfe6e9;
+}
+
+.upload-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.upload-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.upload-thumb-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.upload-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+}
+
+.upload-thumb-placeholder {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
-  color: #888;
+  color: #999;
+  background: #f0f0f0;
+}
+
+.upload-thumb-placeholder.show {
+  display: flex;
+}
+
+.upload-title-input {
+  min-width: 120px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.upload-item-video .upload-title-input {
+  min-width: 100px;
+}
+
+.upload-desc-input {
+  min-width: 160px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.upload-video-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.upload-item-video {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upload-list-video .upload-item {
+  width: 100%;
+  max-width: 400px;
+}
+
+.btn-remove {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-remove:hover {
+  background: #c0392b;
+}
+
+.link-video {
+  font-size: 13px;
+  color: #3498db;
+  text-decoration: none;
+}
+
+.link-video:hover {
+  text-decoration: underline;
+}
+
+/* 视频「点击观看」按钮样式 */
+.link-watch {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #3498db;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.link-watch:hover {
+  background: #2980b9;
+  color: #fff;
+  text-decoration: none;
+}
+
+.upload-no-url {
+  font-size: 13px;
+  color: #999;
 }
 
 .form-actions {
