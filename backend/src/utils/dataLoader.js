@@ -36,3 +36,21 @@ export async function loadApartments() {
     throw error;
   }
 }
+
+/**
+ * 保存公寓数据到 JSON 文件（管理端增删改后持久化）
+ * @param {Array} apartments - 公寓数据列表
+ * @returns {Promise<void>}
+ */
+export async function saveApartments(apartments) {
+  try {
+    if (!Array.isArray(apartments)) {
+      throw new Error('公寓数据格式错误：应为数组');
+    }
+    const content = JSON.stringify(apartments, null, 2);
+    fs.writeFileSync(DATA_FILE, content, 'utf-8');
+  } catch (error) {
+    console.error('保存公寓数据失败:', error);
+    throw error;
+  }
+}

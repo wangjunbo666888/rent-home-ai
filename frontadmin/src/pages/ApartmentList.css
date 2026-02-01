@@ -1,0 +1,220 @@
+.apartment-list-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+}
+
+.apartment-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.apartment-list-header h1 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.apartment-list-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+  margin-left: 8px;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 编辑按钮：与删除按钮同风格，蓝色 */
+.btn-edit {
+  background: #3498db;
+  color: #fff;
+  margin-right: 8px;
+  text-decoration: none;
+  border: none;
+}
+
+.btn-edit:hover {
+  background: #2980b9;
+  color: #fff;
+}
+
+.apartment-list-error {
+  padding: 12px;
+  background: #fee;
+  color: #c00;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+/* 条件搜索：区域、公寓名与输入框同一行 */
+.apartment-list-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.apartment-list-search .search-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.apartment-list-search .search-row label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+
+.apartment-list-search .search-row input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 160px;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.apartment-list-summary {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.apartment-list-loading {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+.apartment-list-table-wrap {
+  overflow-x: auto;
+}
+
+.apartment-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.apartment-list-table th,
+.apartment-list-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.apartment-list-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.apartment-list-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.cell-address {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-remarks {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apartment-list-empty {
+  text-align: center;
+  color: #999;
+  padding: 32px;
+}
+
+/* 分页：显示在右下角 */
+.apartment-list-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.btn-page {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: #bdc3c7;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #666;
+  margin: 0 8px;
+}

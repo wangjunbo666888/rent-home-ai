@@ -6,7 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { matchApartments } from './services/matchingService.js';
-import { loadApartments } from './utils/dataLoader.js';
+import { loadApartments, saveApartments } from './utils/dataLoader.js';
 import { getSuggestion } from './utils/tencentMapApi.js';
 
 // 加载环境变量
@@ -124,6 +124,126 @@ app.get('/api/apartments', (req, res) => {
     data: apartmentsData,
     total: apartmentsData.length
   });
+});
+
+/** ---------- 管理端：公寓增删改查 ---------- */
+
+/**
+ * 重新从文件加载公寓数据到内存
+ * @returns {Promise<Array>}
+ */
+async function reloadApartments() {
+  const data = await loadApartments();
+  apartmentsData.length = 0;
+  apartmentsData.push(...data);
+  return data;
+}
+
+/**
+ * 根据现有列表生成新公寓 ID（APT0001 格式）
+ * @param {Array} list
+ * @returns {string}
+ */
+function nextApartmentId(list) {
+  let max = 0;
+  for (const item of list) {
+    const m = /^APT(\d+)$/i.exec(item.id);
+    if (m) max = Math.max(max, parseInt(m[1], 10));
+  }
+  return 'APT' + String(max + 1).padStart(4, '0');
+}
+
+/** 管理端 - 获取公寓列表 */
+app.get('/api/admin/apartments', (req, res) => {
+  res.json({
+    success: true,
+    data: apartmentsData,
+    total: apartmentsData.length
+  });
+});
+
+/** 管理端 - 获取单条公寓 */
+app.get('/api/admin/apartments/:id', (req, res) => {
+  const item = apartmentsData.find(a => a.id === req.params.id);
+  if (!item) {
+    return res.status(404).json({ success: false, message: '公寓不存在' });
+  }
+  res.json({ success: true, data: item });
+});
+
+/** 管理端 - 新增公寓 */
+app.post('/api/admin/apartments', async (req, res) => {
+  try {
+    const body = req.body || {};
+    const id = body.id || nextApartmentId(apartmentsData);
+    if (apartmentsData.some(a => a.id === id)) {
+      return res.status(400).json({ success: false, message: 'ID 已存在' });
+    }
+    const newItem = {
+      id,
+      name: body.name ?? '',
+      minPrice: Number(body.minPrice) || 0,
+      maxPrice: Number(body.maxPrice) || 0,
+      address: body.address ?? '',
+      district: body.district ?? '',
+      remarks: body.remarks ?? '',
+      images: Array.isArray(body.images) ? body.images : [],
+      videos: Array.isArray(body.videos) ? body.videos : []
+    };
+    apartmentsData.push(newItem);
+    await saveApartments(apartmentsData);
+    await reloadApartments();
+    res.status(201).json({ success: true, data: newItem });
+  } catch (error) {
+    console.error('❌ 新增公寓失败:', error);
+    res.status(500).json({ success: false, message: error.message || '新增失败' });
+  }
+});
+
+/** 管理端 - 更新公寓 */
+app.put('/api/admin/apartments/:id', async (req, res) => {
+  try {
+    const idx = apartmentsData.findIndex(a => a.id === req.params.id);
+    if (idx === -1) {
+      return res.status(404).json({ success: false, message: '公寓不存在' });
+    }
+    const body = req.body || {};
+    const updated = {
+      ...apartmentsData[idx],
+      name: body.name !== undefined ? body.name : apartmentsData[idx].name,
+      minPrice: body.minPrice !== undefined ? Number(body.minPrice) : apartmentsData[idx].minPrice,
+      maxPrice: body.maxPrice !== undefined ? Number(body.maxPrice) : apartmentsData[idx].maxPrice,
+      address: body.address !== undefined ? body.address : apartmentsData[idx].address,
+      district: body.district !== undefined ? body.district : apartmentsData[idx].district,
+      remarks: body.remarks !== undefined ? body.remarks : apartmentsData[idx].remarks,
+      images: Array.isArray(body.images) ? body.images : (apartmentsData[idx].images || []),
+      videos: Array.isArray(body.videos) ? body.videos : (apartmentsData[idx].videos || [])
+    };
+    apartmentsData[idx] = updated;
+    await saveApartments(apartmentsData);
+    await reloadApartments();
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    console.error('❌ 更新公寓失败:', error);
+    res.status(500).json({ success: false, message: error.message || '更新失败' });
+  }
+});
+
+/** 管理端 - 删除公寓 */
+app.delete('/api/admin/apartments/:id', async (req, res) => {
+  try {
+    const idx = apartmentsData.findIndex(a => a.id === req.params.id);
+    if (idx === -1) {
+      return res.status(404).json({ success: false, message: '公寓不存在' });
+    }
+    apartmentsData.splice(idx, 1);
+    await saveApartments(apartmentsData);
+    await reloadApartments();
+    res.json({ success: true, message: '已删除' });
+  } catch (error) {
+    console.error('❌ 删除公寓失败:', error);
+    res.status(500).json({ success: false, message: error.message || '删除失败' });
+  }
 });
 
 // 启动服务器
