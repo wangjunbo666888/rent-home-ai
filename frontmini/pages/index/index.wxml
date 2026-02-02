@@ -1,0 +1,79 @@
+<!-- 首页：搜索表单 -->
+<view class="page-index">
+  <view class="header">
+    <text class="title">🏠 智能租房匹配系统</text>
+    <text class="desc">根据上班地点、通勤时长和预算，智能匹配最适合的公寓</text>
+  </view>
+
+  <view class="card form-card">
+    <!-- 上班地址（带联想） -->
+    <view class="form-group form-group-address">
+      <text class="label">📍 上班地址 <text class="required">*</text></text>
+      <view class="address-wrap">
+        <input
+          class="input address-input"
+          placeholder="例如：亮马河、国贸大厦"
+          value="{{workAddress}}"
+          bindinput="onWorkAddressInput"
+          disabled="{{loading}}"
+        />
+        <text class="loading-tip" wx:if="{{suggestionLoading}}">加载中...</text>
+        <view class="suggestion-list" wx:if="{{suggestionOpen && suggestions.length > 0}}">
+          <view
+            class="suggestion-item"
+            wx:for="{{suggestions}}"
+            wx:key="index"
+            data-index="{{index}}"
+            bindtap="onSelectSuggestion"
+          >
+            <text class="suggestion-title">{{item.title || '未知'}}</text>
+            <text class="suggestion-address" wx:if="{{item.address}}">{{item.address}}</text>
+          </view>
+        </view>
+      </view>
+      <text class="hint">输入关键词后可选择联想地址，以便准确计算通勤时间</text>
+    </view>
+
+    <!-- 通勤时长 -->
+    <view class="form-group">
+      <text class="label">⏱️ 最大通勤时长（分钟）</text>
+      <input
+        class="input"
+        type="number"
+        value="{{commuteTime}}"
+        bindinput="onCommuteTimeChange"
+        placeholder="60"
+        disabled="{{loading}}"
+      />
+      <text class="hint">系统将筛选通勤时间不超过此时长的公寓</text>
+    </view>
+
+    <!-- 预算 -->
+    <view class="form-group">
+      <text class="label">💰 预算（元/月）</text>
+      <input
+        class="input"
+        type="number"
+        value="{{budget}}"
+        bindinput="onBudgetChange"
+        placeholder="3000"
+        disabled="{{loading}}"
+      />
+      <text class="hint">系统将筛选价格不超过此预算的公寓</text>
+    </view>
+
+    <view class="error-box" wx:if="{{error}}">⚠️ {{error}}</view>
+
+    <button
+      class="btn-search"
+      disabled="{{loading || !workAddress}}"
+      bindtap="onSearch"
+    >
+      {{loading ? '匹配中...' : '🔍 开始匹配'}}
+    </button>
+  </view>
+
+  <view class="empty-tip" wx:if="{{!loading && !error}}">
+    <text>👆 请输入您的租房需求，系统将为您匹配最合适的公寓</text>
+  </view>
+</view>

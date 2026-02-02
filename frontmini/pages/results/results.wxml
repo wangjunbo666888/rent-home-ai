@@ -1,0 +1,78 @@
+<!-- 结果页：列表 + 地图 -->
+<view class="page-results">
+  <view class="header">
+    <text class="title">🏠 智能租房匹配系统</text>
+    <text class="desc">根据上班地点、通勤时长和预算，智能匹配最适合的公寓</text>
+  </view>
+
+  <view class="card" wx:if="{{results.length === 0}}">
+    <view class="empty">暂无匹配结果</view>
+  </view>
+
+  <block wx:else>
+    <view class="card summary-card">
+      <text class="summary-title">找到 {{results.length}} 个符合条件的公寓</text>
+      <view class="search-summary" wx:if="{{searchParams}}">
+        <text class="tag">上班地址：{{searchParams.workAddress}}</text>
+        <text class="tag">通勤时长：≤{{searchParams.commuteTime}}分钟</text>
+        <text class="tag">预算：≤{{searchParams.budget}}元</text>
+      </view>
+    </view>
+
+    <view class="content">
+      <scroll-view class="list-wrap" scroll-y enhanced show-scrollbar="{{false}}">
+        <view
+          class="apartment-card"
+          wx:for="{{results}}"
+          wx:key="id"
+        >
+          <view class="card-header">
+            <text class="apartment-name">{{item.name}}</text>
+            <text class="top-badge" wx:if="{{index < 3}}">TOP {{index + 1}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">💰 价格：</text>
+            <text class="value price">{{item.priceText}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">⏱️ 通勤：</text>
+            <text class="value">{{item.commuteTime}}分钟</text>
+            <text class="distance" wx:if="{{item.distanceText}}">（{{item.distanceText}}）</text>
+          </view>
+          <view class="info-row">
+            <text class="label">📍 地址：</text>
+            <text class="value address">{{item.address}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.district}}">
+            <text class="label">🏘️ 区域：</text>
+            <text class="value">{{item.district}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.remarks}}">
+            <text class="label">📝 备注：</text>
+            <text class="value remarks">{{item.remarks}}</text>
+          </view>
+          <view class="recommendation" wx:if="{{item.recommendation}}">
+            <text class="rec-title">💡 推荐理由：</text>
+            <text class="rec-text">{{item.recommendation}}</text>
+          </view>
+          <view class="route" wx:if="{{item.commuteRoute && item.commuteRoute !== '公共交通'}}">
+            <text class="route-title">🚇 路线：</text>
+            <text class="route-text">{{item.commuteRoute}}</text>
+          </view>
+          <button class="btn-media" data-index="{{index}}" bindtap="goMedia">📷 查看图片与视频</button>
+        </view>
+      </scroll-view>
+
+      <view class="map-wrap">
+        <map
+          class="map"
+          latitude="{{latitude}}"
+          longitude="{{longitude}}"
+          scale="{{scale}}"
+          markers="{{markers}}"
+          show-location
+        />
+      </view>
+    </view>
+  </block>
+</view>

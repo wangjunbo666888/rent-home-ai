@@ -1,0 +1,80 @@
+<!-- 媒体详情：图片与视频 -->
+<view class="page-media">
+  <view class="header" wx:if="{{apartment}}">
+    <text class="title">📷 {{apartment.name}} - 图片与视频</text>
+    <text class="desc">查看并下载公寓实拍图片与视频</text>
+  </view>
+
+  <view class="card empty-card" wx:if="{{!apartment}}">
+    <text class="empty-text">未选择公寓，请从结果列表进入</text>
+  </view>
+
+  <block wx:elif="{{images.length === 0 && videos.length === 0}}">
+    <view class="card empty-card">
+      <text class="empty-text">该公寓暂无图片或视频</text>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="tabs">
+      <view
+        class="tab {{activeTab === 'images' ? 'active' : ''}}"
+        wx:if="{{images.length > 0}}"
+        data-tab="images"
+        bindtap="switchTab"
+      >
+        📷 图片 ({{images.length}})
+      </view>
+      <view
+        class="tab {{activeTab === 'videos' ? 'active' : ''}}"
+        wx:if="{{videos.length > 0}}"
+        data-tab="videos"
+        bindtap="switchTab"
+      >
+        🎬 视频 ({{videos.length}})
+      </view>
+    </view>
+
+    <view class="media-section" wx:if="{{activeTab === 'images' && images.length > 0}}">
+      <view
+        class="media-card image-card"
+        wx:for="{{images}}"
+        wx:key="index"
+      >
+        <image
+          class="preview-img"
+          src="{{item.url || item}}"
+          mode="widthFix"
+          data-url="{{item.url || item}}"
+          bindtap="onPreviewImage"
+        />
+        <text class="media-title" wx:if="{{item.title}}">{{item.title}}</text>
+        <button
+          class="btn-save"
+          data-url="{{item.url || item}}"
+          data-name="{{item.title || '图片'}}"
+          bindtap="onSaveImage"
+        >
+          ⬇ 保存图片
+        </button>
+      </view>
+    </view>
+
+    <view class="media-section" wx:if="{{activeTab === 'videos' && videos.length > 0}}">
+      <view
+        class="media-card video-card"
+        wx:for="{{videos}}"
+        wx:key="index"
+      >
+        <video
+          class="preview-video"
+          src="{{item.url || item}}"
+          controls
+          show-center-play-btn
+          object-fit="contain"
+        />
+        <text class="media-title" wx:if="{{item.title}}">{{item.title}}</text>
+      </view>
+    </view>
+  </block>
+</view>
