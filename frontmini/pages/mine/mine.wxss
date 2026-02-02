@@ -1,0 +1,123 @@
+/* 我的：与首页一致的 indigo 风格 */
+.page-mine {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+}
+
+.header-bar {
+  height: 88rpx;
+  padding: 0 32rpx;
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.main-scroll {
+  height: calc(100vh - 88rpx - 120rpx);
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  border: 2rpx solid #f1f5f9;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-placeholder {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.info-label {
+  width: 120rpx;
+  font-size: 28rpx;
+  color: #64748b;
+}
+
+.info-value {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #f1f5f9;
+}
+
+.extra-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.extra-row:last-child {
+  border-bottom: none;
+}
+
+.extra-label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #64748b;
+}
+
+.extra-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1e293b;
+}

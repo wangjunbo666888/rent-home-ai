@@ -1,23 +1,33 @@
-<!-- 首页：搜索表单 -->
+<!-- 首页：顶部横幅 + 浅灰背景 + 白卡片 -->
 <view class="page-index">
-  <view class="header">
-    <text class="title">🏠 智能租房匹配系统</text>
-    <text class="desc">根据上班地点、通勤时长和预算，智能匹配最适合的公寓</text>
-  </view>
+  <scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- 顶部横幅区域 -->
+    <view class="top-banner">
+      <text class="banner-title">速配魔方</text>
+      <text class="banner-desc">公寓匹配房源的智能导航</text>
+      <view class="banner-bg-icon">🏢</view>
+    </view>
 
-  <view class="card form-card">
-    <!-- 上班地址（带联想） -->
-    <view class="form-group form-group-address">
-      <text class="label">📍 上班地址 <text class="required">*</text></text>
-      <view class="address-wrap">
-        <input
-          class="input address-input"
-          placeholder="例如：亮马河、国贸大厦"
-          value="{{workAddress}}"
-          bindinput="onWorkAddressInput"
-          disabled="{{loading}}"
-        />
-        <text class="loading-tip" wx:if="{{suggestionLoading}}">加载中...</text>
+    <view class="form-section">
+      <!-- 上班地址 -->
+      <view class="form-group">
+        <view class="label-row">
+          <text class="label-icon address">📍</text>
+          <text class="label-text">上班地址</text>
+          <text class="label-required">*</text>
+        </view>
+        <view class="input-wrap address-wrap">
+          <input
+            class="input address-input"
+            placeholder="请输入您的办公地点"
+            value="{{workAddress}}"
+            bindinput="onWorkAddressInput"
+            disabled="{{loading}}"
+          />
+          <view class="input-icon-target" wx:if="{{!suggestionLoading}}">🎯</view>
+          <text class="loading-tip" wx:else>加载中...</text>
+        </view>
+        <text class="hint">输入后将自动联想地址，确保通勤计算精准性</text>
         <view class="suggestion-list" wx:if="{{suggestionOpen && suggestions.length > 0}}">
           <view
             class="suggestion-item"
@@ -31,49 +41,62 @@
           </view>
         </view>
       </view>
-      <text class="hint">输入关键词后可选择联想地址，以便准确计算通勤时间</text>
+
+      <!-- 最大通勤时长（滑块） -->
+      <view class="form-group">
+        <view class="label-row">
+          <text class="label-icon commute">⏰</text>
+          <text class="label-text">最大通勤时长 (分钟)</text>
+        </view>
+        <view class="slider-card">
+          <view class="slider-head">
+            <text class="slider-value">{{commuteTime}}<text class="slider-unit"> min</text></text>
+            <text class="slider-desc">平均公交/地铁时长</text>
+          </view>
+          <slider
+            class="slider"
+            min="15"
+            max="120"
+            step="5"
+            value="{{commuteTime}}"
+            activeColor="#3b82f6"
+            backgroundColor="#e5e7eb"
+            block-size="24"
+            bindchange="onCommuteSliderChange"
+          />
+        </view>
+        <text class="hint">过滤通勤超过此时长的所有房源</text>
+      </view>
+
+      <!-- 月租预算 -->
+      <view class="form-group">
+        <view class="label-row">
+          <text class="label-icon budget">💰</text>
+          <text class="label-text">月租预算 (元)</text>
+        </view>
+        <view class="input-wrap budget-wrap">
+          <text class="budget-prefix">¥</text>
+          <input
+            class="input budget-input"
+            type="number"
+            placeholder="请输入最高预算"
+            value="{{budget}}"
+            bindinput="onBudgetChange"
+            disabled="{{loading}}"
+          />
+        </view>
+        <text class="hint">系统将为您剔除价格溢出的公寓信息</text>
+      </view>
+
+      <view class="error-box" wx:if="{{error}}">⚠️ {{error}}</view>
+
+      <button
+        class="btn-match"
+        disabled="{{loading || !workAddress}}"
+        bindtap="onSearch"
+      >
+        {{loading ? '匹配中...' : '开始智能匹配'}}
+      </button>
     </view>
-
-    <!-- 通勤时长 -->
-    <view class="form-group">
-      <text class="label">⏱️ 最大通勤时长（分钟）</text>
-      <input
-        class="input"
-        type="number"
-        value="{{commuteTime}}"
-        bindinput="onCommuteTimeChange"
-        placeholder="60"
-        disabled="{{loading}}"
-      />
-      <text class="hint">系统将筛选通勤时间不超过此时长的公寓</text>
-    </view>
-
-    <!-- 预算 -->
-    <view class="form-group">
-      <text class="label">💰 预算（元/月）</text>
-      <input
-        class="input"
-        type="number"
-        value="{{budget}}"
-        bindinput="onBudgetChange"
-        placeholder="3000"
-        disabled="{{loading}}"
-      />
-      <text class="hint">系统将筛选价格不超过此预算的公寓</text>
-    </view>
-
-    <view class="error-box" wx:if="{{error}}">⚠️ {{error}}</view>
-
-    <button
-      class="btn-search"
-      disabled="{{loading || !workAddress}}"
-      bindtap="onSearch"
-    >
-      {{loading ? '匹配中...' : '🔍 开始匹配'}}
-    </button>
-  </view>
-
-  <view class="empty-tip" wx:if="{{!loading && !error}}">
-    <text>👆 请输入您的租房需求，系统将为您匹配最合适的公寓</text>
-  </view>
+  </scroll-view>
 </view>

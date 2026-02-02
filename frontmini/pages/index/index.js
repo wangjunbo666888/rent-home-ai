@@ -63,16 +63,10 @@ Page({
     if (full) this.setData({ workAddress: full, suggestions: [], suggestionOpen: false });
   },
 
-  /** 通勤时长输入（允许清空、允许中间状态，不做实时范围限制避免闪烁） */
-  onCommuteTimeChange(e) {
-    const v = (e.detail && e.detail.value) || '';
-    if (v === '') {
-      this.setData({ commuteTime: '' });
-      return;
-    }
-    const n = parseInt(v, 10);
-    if (!isNaN(n)) this.setData({ commuteTime: n });
-    else this.setData({ commuteTime: v });
+  /** 通勤时长滑块（15–120 分钟） */
+  onCommuteSliderChange(e) {
+    const v = e.detail && e.detail.value;
+    if (v !== undefined && v !== null) this.setData({ commuteTime: v });
   },
 
   /** 预算输入（允许清空、允许中间状态，不做实时范围限制避免闪烁） */
@@ -89,18 +83,19 @@ Page({
 
   /**
    * 校验并规整通勤时长与预算（提交时调用）
-   * 通勤时长、预算不能为空；通勤 10-120 分钟，预算 500-50000 元
+   * 通勤时长、预算不能为空；通勤 15-120 分钟（与滑块一致），预算 500-50000 元
    * @returns {{ commuteTime: number, budget: number } | null } 合法时返回规整后的值，非法时返回 null 并已弹窗
    */
   validateNumberInputs() {
     const { commuteTime, budget } = this.data;
-    const COMMUTE_MIN = 10;
+    const COMMUTE_MIN = 15;
     const COMMUTE_MAX = 120;
     const BUDGET_MIN = 500;
     const BUDGET_MAX = 50000;
 
-    if (commuteTime === '' || commuteTime === undefined || commuteTime === null) {
-      wx.showToast({ title: '请输入通勤时长', icon: 'none', duration: 2000 });
+    const ct = parseInt(commuteTime, 10);
+    if (commuteTime === '' || commuteTime === undefined || commuteTime === null || isNaN(ct)) {
+      wx.showToast({ title: '请设置通勤时长', icon: 'none', duration: 2000 });
       return null;
     }
     if (budget === '' || budget === undefined || budget === null) {
@@ -108,10 +103,9 @@ Page({
       return null;
     }
 
-    const ct = parseInt(commuteTime, 10);
     const bd = parseInt(budget, 10);
 
-    if (isNaN(ct) || ct < COMMUTE_MIN || ct > COMMUTE_MAX) {
+    if (ct < COMMUTE_MIN || ct > COMMUTE_MAX) {
       wx.showToast({
         title: `通勤时长请填写 ${COMMUTE_MIN}-${COMMUTE_MAX} 分钟`,
         icon: 'none',
