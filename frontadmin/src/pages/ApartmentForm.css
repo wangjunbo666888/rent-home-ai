@@ -1,5 +1,5 @@
 .apartment-form-page {
-  max-width: 640px;
+  max-width: 1200px;
   margin: 0 auto;
   background: #fff;
   border-radius: 8px;
@@ -138,16 +138,58 @@
   font-family: ui-monospace, monospace;
 }
 
-.form-row.two {
+/* 第一行：区域、名称 横向 */
+.form-row-inline.form-row-1 {
   flex-direction: row;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.form-row.two > div {
-  flex: 1;
+.form-row-inline.form-row-1 .form-field {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+/* 第二行：地址、最低月租、最高月租 横向 */
+.form-row-inline.form-row-2 {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.form-row-inline.form-row-2 .form-field-address {
+  flex: 2 1 300px;
+  min-width: 240px;
+}
+
+.form-row-inline.form-row-2 .form-field-rent {
+  flex: 1 1 120px;
+  min-width: 100px;
+}
+
+.form-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-field select {
+  cursor: pointer;
+  min-width: 0;
 }
 
 /* 图片/视频上传 */
@@ -173,13 +215,54 @@
   background: #dfe6e9;
 }
 
+/* 第四行、第五行：图片/视频区域 */
+.form-row-upload .upload-section {
+  width: 100%;
+}
+
 .upload-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+}
+
+/* 图片列表：横向排列，每项为卡片（类似图4） */
+.upload-list-image {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.upload-item-image {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 160px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.upload-item-image .upload-thumb-wrap-card {
+  width: 100%;
+  height: 120px;
+  border-radius: 6px;
+}
+
+.upload-item-image .upload-title-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.upload-item-image .btn-remove {
+  align-self: center;
 }
 
 .upload-item {
@@ -187,10 +270,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 10px;
   background: #f8f9fa;
   border-radius: 6px;
   border: 1px solid #eee;
+  flex-shrink: 0;
 }
 
 .upload-thumb-wrap {
@@ -254,14 +338,102 @@
   color: #666;
 }
 
+/* 视频卡片：类似图1，横向排列，每项为卡片（预览区 + 标题 + 操作） */
 .upload-item-video {
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
+  gap: 10px;
+  width: 280px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+/* 视频播放区：当前页内嵌播放，带原生控制条 */
+.upload-video-player-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+}
+
+.upload-video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  vertical-align: middle;
+}
+
+.upload-video-placeholder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #999;
+  background: #333;
+}
+
+.upload-item-video .upload-title-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.upload-item-video .upload-desc-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.upload-video-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.upload-video-actions .link-watch,
+.upload-video-actions .link-download {
+  flex-shrink: 0;
+}
+
+.link-download {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #3498db;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link-download:hover {
+  background: #2980b9;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* 视频列表横向排列（类似图1） */
+.upload-list-video {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .upload-list-video .upload-item {
-  width: 100%;
-  max-width: 400px;
+  flex: 0 0 auto;
 }
 
 .btn-remove {

@@ -287,64 +287,66 @@ function ApartmentForm() {
       {error && <div className="apartment-form-error">{error}</div>}
 
       <form className="apartment-form" onSubmit={handleSubmit}>
-        {/* 1. 区域、名称、地址 在最前 */}
-        <div className="form-row">
-          <label>区域 *</label>
-          <select
-            value={form.district}
-            onChange={e => handleChange('district', e.target.value)}
-            required
-          >
-            <option value="">请选择区域</option>
-            {districts.map(d => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-row">
-          <label>名称 *</label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={e => handleChange('name', e.target.value)}
-            required
-            placeholder="公寓名称"
-          />
-        </div>
-        <div className="form-row">
-          <label>地址</label>
-          <div className="address-input-wrap">
+        {/* 第一行：区域、名称 */}
+        <div className="form-row form-row-inline form-row-1">
+          <div className="form-field">
+            <label>区域 *</label>
+            <select
+              value={form.district}
+              onChange={e => handleChange('district', e.target.value)}
+              required
+            >
+              <option value="">请选择区域</option>
+              {districts.map(d => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-field">
+            <label>名称 *</label>
             <input
               type="text"
-              value={form.address}
-              onChange={handleAddressChange}
-              onFocus={() => suggestions.length > 0 && setSuggestionOpen(true)}
-              onBlur={handleAddressBlur}
-              placeholder="输入关键词联想地址，如：朝阳区化工路"
-              autoComplete="off"
+              value={form.name}
+              onChange={e => handleChange('name', e.target.value)}
+              required
+              placeholder="公寓名称"
             />
-            {suggestionLoading && <span className="address-loading">加载中...</span>}
-            {suggestionOpen && suggestions.length > 0 && (
-              <ul className="address-suggestion-list" role="listbox">
-                {suggestions.map(item => (
-                  <li
-                    key={item.id || item.title + (item.address || '')}
-                    className="address-suggestion-item"
-                    role="option"
-                    onMouseDown={e => { e.preventDefault(); handleSelectSuggestion(item); }}
-                  >
-                    <span className="suggestion-title">{item.title || '未知'}</span>
-                    {item.address && <span className="suggestion-address">{item.address}</span>}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
         </div>
 
-        {/* 2. 最低月租、最高月租 */}
-        <div className="form-row two">
-          <div>
+        {/* 第二行：地址、最低月租、最高月租 */}
+        <div className="form-row form-row-inline form-row-2">
+          <div className="form-field form-field-address">
+            <label>地址</label>
+            <div className="address-input-wrap">
+              <input
+                type="text"
+                value={form.address}
+                onChange={handleAddressChange}
+                onFocus={() => suggestions.length > 0 && setSuggestionOpen(true)}
+                onBlur={handleAddressBlur}
+                placeholder="输入关键词联想地址，如：朝阳区化工路"
+                autoComplete="off"
+              />
+              {suggestionLoading && <span className="address-loading">加载中...</span>}
+              {suggestionOpen && suggestions.length > 0 && (
+                <ul className="address-suggestion-list" role="listbox">
+                  {suggestions.map(item => (
+                    <li
+                      key={item.id || item.title + (item.address || '')}
+                      className="address-suggestion-item"
+                      role="option"
+                      onMouseDown={e => { e.preventDefault(); handleSelectSuggestion(item); }}
+                    >
+                      <span className="suggestion-title">{item.title || '未知'}</span>
+                      {item.address && <span className="suggestion-address">{item.address}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          <div className="form-field form-field-rent">
             <label>最低月租（元）</label>
             <input
               type="number"
@@ -355,7 +357,7 @@ function ApartmentForm() {
               placeholder="2500"
             />
           </div>
-          <div>
+          <div className="form-field form-field-rent">
             <label>最高月租（元）</label>
             <input
               type="number"
@@ -368,6 +370,7 @@ function ApartmentForm() {
           </div>
         </div>
 
+        {/* 第三行：备注 */}
         <div className="form-row">
           <label>备注</label>
           <textarea
@@ -378,18 +381,18 @@ function ApartmentForm() {
           />
         </div>
 
-        {/* 3. 图片上传 */}
-        <div className="form-row">
+        {/* 第四行：图片（横向排列） */}
+        <div className="form-row form-row-upload">
           <label>图片</label>
           <div className="upload-section">
             <label className="upload-btn">
               <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
               从本地上传图片
             </label>
-            <ul className="upload-list">
+            <ul className="upload-list upload-list-image">
               {(form.images || []).map((img, i) => (
-                <li key={img.url ? `${img.url}-${i}` : i} className="upload-item">
-                  <div className="upload-thumb-wrap">
+                <li key={img.url ? `${img.url}-${i}` : i} className="upload-item upload-item-image">
+                  <div className="upload-thumb-wrap upload-thumb-wrap-card">
                     {img.url ? (
                       <>
                         <img
@@ -418,8 +421,8 @@ function ApartmentForm() {
           </div>
         </div>
 
-        {/* 4. 视频上传 */}
-        <div className="form-row">
+        {/* 第五行：视频（横向排列） */}
+        <div className="form-row form-row-upload">
           <label>视频</label>
           <div className="upload-section">
             <label className="upload-btn">
@@ -429,12 +432,25 @@ function ApartmentForm() {
             <ul className="upload-list upload-list-video">
               {(form.videos || []).map((v, i) => (
                 <li key={v.url ? `${v.url}-${i}` : i} className="upload-item upload-item-video">
-                  <span className="upload-video-label">视频 {i + 1}</span>
+                  <div className="upload-video-player-wrap">
+                    {v.url ? (
+                      <video
+                        src={v.url}
+                        className="upload-video-player"
+                        controls
+                        preload="metadata"
+                        playsInline
+                        title={v.title || `视频 ${i + 1}`}
+                      />
+                    ) : (
+                      <span className="upload-video-placeholder">暂无视频</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={v.title || ''}
                     onChange={e => updateVideo(i, 'title', e.target.value)}
-                    placeholder="标题"
+                    placeholder="视频标题"
                     className="upload-title-input"
                   />
                   <input
@@ -444,20 +460,16 @@ function ApartmentForm() {
                     placeholder="描述（可选）"
                     className="upload-desc-input"
                   />
-                  {v.url ? (
-                    <a
-                      href={v.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="link-video link-watch"
-                      title="在新窗口打开观看"
-                    >
-                      点击观看
-                    </a>
-                  ) : (
-                    <span className="upload-no-url">暂无视频地址</span>
-                  )}
-                  <button type="button" className="btn-remove" onClick={() => removeVideo(i)}>删除</button>
+                  <div className="upload-video-actions">
+                    {v.url ? (
+                      <a href={v.url} download className="link-download" title="下载视频">
+                        ↓ 下载视频
+                      </a>
+                    ) : (
+                      <span className="upload-no-url">暂无视频地址</span>
+                    )}
+                    <button type="button" className="btn-remove" onClick={() => removeVideo(i)}>删除</button>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -15,10 +15,6 @@
       {
         "url": "https://picsum.photos/seed/apt001b/800/600",
         "title": "卧室"
-      },
-      {
-        "url": "https://picsum.photos/seed/apt001c/800/600",
-        "title": "卫生间"
       }
     ],
     "videos": [
@@ -236,28 +232,24 @@
     "remarks": "",
     "images": [
       {
-        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/E2F0E460-C4B2-4C5E-A6B3-448C8C1A8C9D.JPG?q-sign-algorithm=sha1&q-ak=AKIDspz6LW3wc2aedPTKPea2WDOQkguraWuke-iQ-y__l7yr0ZfxJvQcLvH6ZLE44bq3&q-sign-time=1769946202;1769949802&q-key-time=1769946202;1769949802&q-header-list=host&q-url-param-list=&q-signature=d036326fd4d0820d272ea4f2ff9b535cdb23949b&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNaf61eb3448095df5121082cf0697ce7e0WamgBcI0HkUIp6i4wwTL0_78jFLo4n7XN31Rk0E9PDLGwGwso99yysOrJc0a40kK4to0wZ8b8JnO7nNpCa6cLQPqTB5ZN7Iq0-6JgeoAFyT-ROBeMp9-XZuBlN9pWstYNCdus6Mgb5uWIeY6G0xMBwd-0WILTxH5XJyunhxYjrOBBodgA2DTxE1NFg0uoYufZ8PvTH_TH_UVt0mapnzEKiwV2qFv5Avqvo_rT-6eh7mWeZsDZRoj09Z_NcdeL1oTo8tIrsVAoK7weEP_r77zmQ",
-        "title": "客厅"
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/images/1769956311551-5ru9mvr6pcu.jpg",
+        "title": "测试图"
       },
       {
-        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/F1C504A4-649E-4FC4-B606-9B997172E9BA.JPG?q-sign-algorithm=sha1&q-ak=AKIDWv4issX6RVpfCdKJaABv-Mq6k4nmZUBGDPT8YgVbSvJNqL4CppI5BlKfr-gbhht_&q-sign-time=1769946237;1769949837&q-key-time=1769946237;1769949837&q-header-list=host&q-url-param-list=&q-signature=9fe78cab4c1bcf96727eedefe8ada44f87266192&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNad51933e9f3437c759c32d06cff688cb1WamgBcI0HkUIp6i4wwTL02ikImRVeSsqIRjKjrQMkVhXxWSiBwTIOvkNd0KOPFdVy3X_V-Mn9ONFtd67bwK6Ds-ZpthdU5VxDv4ZfhXl8c-ez9XH1EEb6uiFa1VwJ2gLZb5KL6g9O6akrGQKXDZor9SeRqfE13BdYKM6iWyAWCT0wae9oTBOz22U2cfP5DiU_5IbXZND_ApqJi7yTGblUhG-SOyh22vTQog7CS9BfR4dbcLmlrg5zMCcGCN6Ay410yyf-5DK3cchOFbKosmfQg",
-        "title": "卧室"
-      },
-      {
-        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/IMG_2777_VSCO%202.JPG?q-sign-algorithm=sha1&q-ak=AKIDh8P12lA8ZzgwVJKpdxrqn6gU9VquBLpGVY1OFLhv1COet54d--hcnecxtX0yrGmp&q-sign-time=1769946260;1769949860&q-key-time=1769946260;1769949860&q-header-list=host&q-url-param-list=&q-signature=b7b1d7a6453c9acac383a81593cc1afb39bbb90e&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa09a2fbfbe738e1e4ce416bfe859eb647WamgBcI0HkUIp6i4wwTL06N6K8CwqYCMpUGKsLkz3M9pxVYdpAOEb_DFmd2B_0EnD88E6zSoAkTIts4wwlCyfohbJROu0n1_JcONnCj4sCA3ctbFA-CjAs2YMOXDN5nq7PdOagk8K_ilaWQpSxQ71F3wqQ5waz2B5KlpJN30XOpLxffYNGau3XncyfEPZcyhPIvjJlcYgWXBTFcF_Ii8b9t1K2IifhDR2IxMXSyB419NRJORt2oh8EfhoGGAu0H4Wcf10zpRz0RiKHEI1tV2WQ",
-        "title": "卫生间"
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/images/1769956324713-bqpep58stkm.jpg",
+        "title": "测试图2"
       }
     ],
     "videos": [
       {
-        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/%E4%BD%8E%E4%BB%B7%E9%AB%98%E5%93%81-1.MOV?q-sign-algorithm=sha1&q-ak=AKIDCxAxHXlDRfpRs5DO5zapAiam0mBqQ3IgAL3BzQcqldxV2T-cws6M6zrTDbC-M-2p&q-sign-time=1769946290;1769949890&q-key-time=1769946290;1769949890&q-header-list=host&q-url-param-list=&q-signature=993e9b1072bcb2fc52fdf083e16f453cf82c1894&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa93bdc3f1956d502d23453e9496349f05WamgBcI0HkUIp6i4wwTL0wmP98yeCUpeboeTdlttAho3iBxDO9xL6JxMnLpgFW2S1AxzAeU-JGTppBMhhvXimC80bH9dt3TeZTY5U1detw69EAsi-cU_oLUB_CCISXFsGX7K96OPLyDGix6gLI-IsuHWdOVCuQwXl7eOvebu-IkWZ2wpP7beoGVUQNlj3joOxTV1Xd1l9c_0IZRCevgyaLBS4oLjC8qxDxe-NzuzgG3kF68DtoXiRGdMJ5nS7mieb24nUcEU7NUgiRGe2fOfxQ",
-        "title": "公寓实拍",
-        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/videos/1769956348073-sj4xyi9lwhl.mp4",
+        "title": "视频1",
+        "description": "3300"
       },
       {
-        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/%E5%BE%97%E5%AF%93%E9%87%8C%E5%85%AC%E5%AF%93/%E6%88%90%E5%93%81-2.MOV?q-sign-algorithm=sha1&q-ak=AKID8w_247SqccrIcjyfYhCHtmX8l3qx0t_BOLP3gPrh7abAxA8uMlLkYw3aPLXsrNkC&q-sign-time=1769946307;1769949907&q-key-time=1769946307;1769949907&q-header-list=host&q-url-param-list=&q-signature=c20ddc9d568df99b332e4cee3e02c2306aa9a3e2&x-cos-security-token=tp6ur32m2YeB0PyADdCztCOPRM12ewNa95bb3e21a50eeb0ec172f671c11b02afWamgBcI0HkUIp6i4wwTL01tXxHVq3la6qiXPP__P-jYI6hW8UbdxyoSk5t3qutvZ1knO8sKBOx7fgkCBNWnrRDgXtpy8o_nVAACpz4xs_2GlojCSvsDQNeGTFgcgncZwvLN5oyfxpD85Idt_yQKH88gOCpkZJtHBQXCxeAywcCYo_Nmwh1WhY2KllXjEYcMSTJwtCalstjpD20ttVJe0PJEPKV747aX4BoL0-m9lfJiYBQ9jJFYkuFFwJ-00-8VHahjVCdkBcKZoYKgqXRF0Vw",
-        "title": "公寓实拍",
-        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/videos/1769992360753-5o771x7mg1k.mp4",
+        "title": "视频2",
+        "description": ""
       }
     ]
   },

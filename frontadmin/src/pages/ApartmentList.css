@@ -60,6 +60,20 @@
   cursor: not-allowed;
 }
 
+/* 查看按钮：灰色，与编辑区分 */
+.btn-view {
+  background: #95a5a6;
+  color: #fff;
+  margin-right: 8px;
+  text-decoration: none;
+  border: none;
+}
+
+.btn-view:hover {
+  background: #7f8c8d;
+  color: #fff;
+}
+
 /* 编辑按钮：与删除按钮同风格，蓝色 */
 .btn-edit {
   background: #3498db;

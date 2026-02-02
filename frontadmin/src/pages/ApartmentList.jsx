@@ -169,6 +169,7 @@ function ApartmentList() {
                   <td>{item.district}</td>
                   <td className="cell-remarks">{item.remarks || '-'}</td>
                   <td>
+                    <Link to={`/${item.id}`} className="btn btn-view">查看</Link>
                     <Link to={`/${item.id}/edit`} className="btn btn-edit">编辑</Link>
                     <button
                       type="button"
