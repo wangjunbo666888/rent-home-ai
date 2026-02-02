@@ -31,14 +31,14 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
     }
 
     try {
-      // 计算通勤时间
+      // 计算通勤时间（家→公司：from=公寓 to=上班地址，与用户「从家到公司」语义一致，避免部分路线接口返回异常长距离）
       console.log(`🔄 [${processedCount}/${apartments.length}] 正在计算 ${apartment.name} 的通勤时间...`);
-      const commuteInfo = await calculateCommuteTime(workAddress, apartment.address);
+      const commuteInfo = await calculateCommuteTime(apartment.address, workAddress);
       
-      // 通勤时间筛选
+      // 通勤时间筛选。commuteInfo 为「公寓→上班」：fromCoord=公寓，toCoord=上班地点
       if (commuteInfo.duration <= commuteTime) {
-        if (!workLocation && commuteInfo.fromCoord) {
-          workLocation = commuteInfo.fromCoord;
+        if (!workLocation && commuteInfo.toCoord) {
+          workLocation = commuteInfo.toCoord;
         }
         results.push({
           ...apartment,
@@ -46,8 +46,8 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
           commuteDistance: commuteInfo.distance,
           commuteRoute: commuteInfo.route,
           recommendation: generateRecommendation(apartment, commuteInfo, budget),
-          lat: commuteInfo.toCoord?.lat,
-          lng: commuteInfo.toCoord?.lng
+          lat: commuteInfo.fromCoord?.lat,
+          lng: commuteInfo.fromCoord?.lng
         });
         console.log(`✅ [${processedCount}/${apartments.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，符合条件`);
       } else {

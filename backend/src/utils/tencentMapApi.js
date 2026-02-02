@@ -64,6 +64,10 @@ export async function calculateCommuteTime(from, to) {
 
     // 第二步：路线规划（公共交通）。固定出发时间为北京时间中午12点，避免深夜公交停运导致路线异常（如通勤240分钟）
     const departureTime = getBeijingNoonTimestamp();
+    const departureDate = new Date(departureTime * 1000);
+    console.log(`🕐 公交路线请求: departure_time=${departureTime} (北京时间 ${departureDate.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}), from=${from.slice(0, 24)}... → to=${to.slice(0, 24)}...`);
+    console.log(`📍 起终点坐标: from(${fromCoord.lat},${fromCoord.lng}) → to(${toCoord.lat},${toCoord.lng})`);
+
     const routeUrl = `${API_BASE_URL}/direction/v1/transit`;
     const routeResponse = await axios.get(routeUrl, {
       params: {
@@ -89,6 +93,7 @@ export async function calculateCommuteTime(from, to) {
      */
     const totalDuration = Math.round(Number(route.duration) || 0);
     const totalDistance = Number(route.distance) || 0;
+    console.log(`📊 公交接口返回: duration=${route.duration} → ${totalDuration}分钟, distance=${route.distance} → ${totalDistance}米`);
 
     // 生成路线描述
     const routeDescription = generateRouteDescription(route);
