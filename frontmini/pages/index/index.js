@@ -63,33 +63,94 @@ Page({
     if (full) this.setData({ workAddress: full, suggestions: [], suggestionOpen: false });
   },
 
-  /** 通勤时长 */
+  /** 通勤时长输入（允许清空、允许中间状态，不做实时范围限制避免闪烁） */
   onCommuteTimeChange(e) {
-    const v = e.detail.value;
+    const v = (e.detail && e.detail.value) || '';
+    if (v === '') {
+      this.setData({ commuteTime: '' });
+      return;
+    }
     const n = parseInt(v, 10);
-    if (!isNaN(n)) this.setData({ commuteTime: Math.max(10, Math.min(120, n)) });
+    if (!isNaN(n)) this.setData({ commuteTime: n });
+    else this.setData({ commuteTime: v });
   },
 
-  /** 预算 */
+  /** 预算输入（允许清空、允许中间状态，不做实时范围限制避免闪烁） */
   onBudgetChange(e) {
-    const v = e.detail.value;
+    const v = (e.detail && e.detail.value) || '';
+    if (v === '') {
+      this.setData({ budget: '' });
+      return;
+    }
     const n = parseInt(v, 10);
-    if (!isNaN(n)) this.setData({ budget: Math.max(1000, Math.min(10000, n)) });
+    if (!isNaN(n)) this.setData({ budget: n });
+    else this.setData({ budget: v });
+  },
+
+  /**
+   * 校验并规整通勤时长与预算（提交时调用）
+   * 通勤时长、预算不能为空；通勤 10-120 分钟，预算 500-50000 元
+   * @returns {{ commuteTime: number, budget: number } | null } 合法时返回规整后的值，非法时返回 null 并已弹窗
+   */
+  validateNumberInputs() {
+    const { commuteTime, budget } = this.data;
+    const COMMUTE_MIN = 10;
+    const COMMUTE_MAX = 120;
+    const BUDGET_MIN = 500;
+    const BUDGET_MAX = 50000;
+
+    if (commuteTime === '' || commuteTime === undefined || commuteTime === null) {
+      wx.showToast({ title: '请输入通勤时长', icon: 'none', duration: 2000 });
+      return null;
+    }
+    if (budget === '' || budget === undefined || budget === null) {
+      wx.showToast({ title: '请输入预算', icon: 'none', duration: 2000 });
+      return null;
+    }
+
+    const ct = parseInt(commuteTime, 10);
+    const bd = parseInt(budget, 10);
+
+    if (isNaN(ct) || ct < COMMUTE_MIN || ct > COMMUTE_MAX) {
+      wx.showToast({
+        title: `通勤时长请填写 ${COMMUTE_MIN}-${COMMUTE_MAX} 分钟`,
+        icon: 'none',
+        duration: 2500
+      });
+      return null;
+    }
+    if (isNaN(bd) || bd < BUDGET_MIN || bd > BUDGET_MAX) {
+      wx.showToast({
+        title: `预算请填写 ${BUDGET_MIN}-${BUDGET_MAX} 元`,
+        icon: 'none',
+        duration: 2500
+      });
+      return null;
+    }
+
+    const clampedCommute = Math.max(COMMUTE_MIN, Math.min(COMMUTE_MAX, ct));
+    const clampedBudget = Math.max(BUDGET_MIN, Math.min(BUDGET_MAX, bd));
+    return { commuteTime: clampedCommute, budget: clampedBudget };
   },
 
   /** 开始匹配 */
   async onSearch() {
-    const { workAddress, commuteTime, budget } = this.data;
+    const { workAddress } = this.data;
     if (!workAddress || !workAddress.trim()) {
       wx.showToast({ title: '请输入上班地址', icon: 'none' });
       return;
     }
+
+    const validated = this.validateNumberInputs();
+    if (!validated) return;
+
+    const { commuteTime, budget } = validated;
     this.setData({ loading: true, error: null });
     try {
       const res = await api.match({
         workAddress: workAddress.trim(),
-        commuteTime: parseInt(commuteTime, 10) || 60,
-        budget: parseInt(budget, 10) || 3000
+        commuteTime,
+        budget
       });
       const results = (res && res.data && Array.isArray(res.data)) ? res.data : [];
       const workLocation = res && res.workLocation ? res.workLocation : null;
