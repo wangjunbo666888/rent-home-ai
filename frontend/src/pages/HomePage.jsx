@@ -21,7 +21,7 @@ function HomePage() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/match', {
+      const response = await fetch('https://api.supeimofang.cn/api/match', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
