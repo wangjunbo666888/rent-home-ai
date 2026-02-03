@@ -75,12 +75,5 @@ Page({
     const url = e.currentTarget.dataset.url;
     if (!url) return;
     media.downloadVideo(url, 'save');
-  },
-
-  /** 打开视频（用系统播放器/文档打开） */
-  onOpenVideo(e) {
-    const url = e.currentTarget.dataset.url;
-    if (!url) return;
-    media.downloadVideo(url, 'open');
   }
 });

@@ -4,6 +4,7 @@
  */
 module.exports = {
   /** 后端 API 根地址，真机/体验版请改为 HTTPS 域名 */
+  //baseUrl: 'https://api.supeimofang.cn',
   baseUrl: 'http://localhost:3001',
   /** 地址联想区域 */
   suggestionRegion: '北京市'

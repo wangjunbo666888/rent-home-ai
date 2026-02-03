@@ -63,7 +63,6 @@
           <text wx:if="{{item.description}}" class="desc">{{item.description}}</text>
           <view class="video-actions">
             <text class="link-btn" data-url="{{item.url}}" bindtap="onDownloadVideo">下载到相册</text>
-            <text class="link-btn" data-url="{{item.url}}" bindtap="onOpenVideo">打开</text>
           </view>
         </view>
       </view>

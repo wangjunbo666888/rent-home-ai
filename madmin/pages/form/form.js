@@ -220,6 +220,15 @@ Page({
       success: (res) => {
         const tempPaths = res.tempFilePaths || [];
         this.uploadImageList(tempPaths);
+      },
+      fail: (err) => {
+        const errMsg = (err && err.errMsg) || '';
+        if (errMsg.indexOf('cancel') !== -1) {
+          // 用户取消选择，不提示错误
+          return;
+        }
+        console.error('[chooseImage] fail', err);
+        wx.showToast({ title: errMsg || '选择图片失败', icon: 'none' });
       }
     });
   },
@@ -237,6 +246,7 @@ Page({
           images.push({ url: result.url, title });
         }
       } catch (e) {
+        console.error('[uploadImage] fail', e);
         wx.showToast({ title: e.message || '图片上传失败', icon: 'none' });
         break;
       }
@@ -245,18 +255,32 @@ Page({
     this.setData({ form, uploadingImage: false });
   },
 
-  /** 选择并上传视频 */
+  /** 选择并上传视频（不传 maxDuration，选完后在 success 里校验时长，避免真机兼容问题） */
   onChooseVideo() {
     if (this.data.uploadingVideo) return;
+    const MAX_VIDEO_SECONDS = 300; // 5 分钟
     wx.chooseMedia({
       count: 1,
       mediaType: ['video'],
       sourceType: ['album', 'camera'],
-      maxDuration: 300,
       success: (res) => {
         const files = res.tempFiles || [];
-        const path = files[0] && files[0].tempFilePath;
-        if (path) this.uploadVideoOne(path);
+        const file = files[0];
+        if (!file || !file.tempFilePath) return;
+        const duration = file.duration; // 秒，部分机型/版本有
+        if (typeof duration === 'number' && duration > MAX_VIDEO_SECONDS) {
+          wx.showToast({ title: '请选择 5 分钟以内的视频', icon: 'none' });
+          return;
+        }
+        this.uploadVideoOne(file.tempFilePath);
+      },
+      fail: (err) => {
+        const errMsg = (err && err.errMsg) || '';
+        if (errMsg.indexOf('cancel') !== -1) {
+          return;
+        }
+        console.error('[chooseMedia] fail', err);
+        wx.showToast({ title: errMsg || '选择视频失败', icon: 'none' });
       }
     });
   },
@@ -274,6 +298,7 @@ Page({
         this.setData({ form });
       }
     } catch (e) {
+      console.error('[uploadVideo] fail', e);
       wx.showToast({ title: e.message || '视频上传失败', icon: 'none' });
     }
     this.setData({ uploadingVideo: false });
