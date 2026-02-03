@@ -1,0 +1,79 @@
+<view class="container page-form">
+  <view wx:if="{{fetchLoading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <view class="header-actions">
+      <button class="btn btn-secondary btn-sm" bindtap="onBack">返回列表</button>
+    </view>
+
+    <view wx:if="{{error}}" class="error-msg">{{error}}</view>
+
+    <view class="form-card">
+      <view class="form-row">
+        <text class="form-label">区域 *</text>
+        <picker mode="selector" range="{{districts}}" value="{{districtIndex}}" bindchange="onDistrictChange">
+          <view class="picker-value">{{form.district || '请选择区域'}}</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <text class="form-label">名称 *</text>
+        <input class="form-input" placeholder="名称" value="{{form.name}}" data-field="name" bindinput="onInput" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">地址</text>
+        <view class="address-wrap">
+          <input class="form-input" placeholder="地址关键词" value="{{form.address}}" data-field="address" bindinput="onInput" />
+          <text wx:if="{{suggestionLoading}}" class="suggestion-loading">加载中...</text>
+          <view wx:if="{{suggestionOpen && suggestions.length > 0}}" class="suggestion-list">
+            <view class="suggestion-item" wx:for="{{suggestions}}" wx:key="*this" data-index="{{index}}" bindtap="onSelectSuggestion">
+              <text class="suggestion-title">{{item.title}}</text>
+              <text wx:if="{{item.address}}" class="suggestion-address">{{item.address}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="form-row inline">
+        <text class="form-label">最低月租（元）</text>
+        <input class="form-input" type="digit" placeholder="2500" value="{{form.minPrice}}" data-field="minPrice" bindinput="onInput" />
+      </view>
+      <view class="form-row inline">
+        <text class="form-label">最高月租（元）</text>
+        <input class="form-input" type="digit" placeholder="3500" value="{{form.maxPrice}}" data-field="maxPrice" bindinput="onInput" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">备注</text>
+        <textarea class="form-input form-textarea" placeholder="有班车、近地铁等" value="{{form.remarks}}" data-field="remarks" bindinput="onInput" />
+      </view>
+    </view>
+
+    <view class="form-card">
+      <text class="form-label">图片</text>
+      <button class="upload-btn" bindtap="onChooseImage" disabled="{{uploadingImage}}">{{uploadingImage ? '上传中...' : '从本地上传图片'}}</button>
+      <view wx:if="{{form.images && form.images.length > 0}}" class="media-list images">
+        <view class="media-item" wx:for="{{form.images}}" wx:key="url">
+          <image class="thumb" src="{{item.url}}" mode="aspectFill" />
+          <input class="title-input" placeholder="图片说明" value="{{item.title}}" data-index="{{index}}" bindinput="updateImageTitle" />
+          <text class="link-btn danger" data-index="{{index}}" bindtap="removeImage">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <text class="form-label">视频</text>
+      <button class="upload-btn" bindtap="onChooseVideo" disabled="{{uploadingVideo}}">{{uploadingVideo ? '上传中...' : '从本地上传视频'}}</button>
+      <view wx:if="{{form.videos && form.videos.length > 0}}" class="media-list videos">
+        <view class="media-item" wx:for="{{form.videos}}" wx:key="url">
+          <video class="video-player" src="{{item.url}}" controls show-center-play-btn />
+          <input class="title-input" placeholder="视频标题" value="{{item.title}}" data-index="{{index}}" data-field="title" bindinput="updateVideoField" />
+          <input class="desc-input" placeholder="描述（可选）" value="{{item.description}}" data-index="{{index}}" data-field="description" bindinput="updateVideoField" />
+          <text class="link-btn danger" data-index="{{index}}" bindtap="removeVideo">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-actions">
+      <button class="btn btn-primary" bindtap="onSubmit" disabled="{{loading}}">{{loading ? '保存中...' : '保存'}}</button>
+      <button class="btn btn-secondary" bindtap="onBack">取消</button>
+    </view>
+  </block>
+</view>

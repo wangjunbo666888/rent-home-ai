@@ -1,0 +1,72 @@
+<view class="container page-detail">
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:elif="{{error || !data}}">
+    <view class="header-actions">
+      <button class="btn btn-secondary btn-sm" bindtap="onBack">返回列表</button>
+    </view>
+    <view class="error-msg">{{error || '未找到该公寓'}}</view>
+  </block>
+
+  <block wx:else>
+    <view class="header-actions">
+      <button class="btn btn-primary btn-sm" bindtap="onEdit">编辑</button>
+      <button class="btn btn-secondary btn-sm" bindtap="onBack">返回列表</button>
+    </view>
+
+    <view class="detail-card">
+      <view class="form-row">
+        <text class="form-label">区域</text>
+        <text class="detail-value">{{data.district || '-'}}</text>
+      </view>
+      <view class="form-row">
+        <text class="form-label">名称</text>
+        <text class="detail-value">{{data.name || '-'}}</text>
+      </view>
+      <view class="form-row">
+        <text class="form-label">地址</text>
+        <text class="detail-value">{{data.address || '-'}}</text>
+      </view>
+      <view class="form-row inline">
+        <text class="form-label">最低月租（元）</text>
+        <text class="detail-value">{{data.minPrice != null ? data.minPrice : '-'}}</text>
+      </view>
+      <view class="form-row inline">
+        <text class="form-label">最高月租（元）</text>
+        <text class="detail-value">{{data.maxPrice != null ? data.maxPrice : '-'}}</text>
+      </view>
+      <view class="form-row">
+        <text class="form-label">备注</text>
+        <text class="detail-value multi">{{data.remarks || '-'}}</text>
+      </view>
+    </view>
+
+    <view class="detail-card">
+      <text class="form-label">图片</text>
+      <view wx:if="{{images.length === 0}}" class="empty-msg">暂无图片</view>
+      <view wx:else class="media-list images">
+        <view class="media-item" wx:for="{{images}}" wx:key="url">
+          <image class="thumb" src="{{item.url}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{item.url}}" />
+          <text class="caption">{{item.title || '图片'}}</text>
+          <text class="link-btn" data-url="{{item.url}}" bindtap="onDownloadImage">下载</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-card">
+      <text class="form-label">视频</text>
+      <view wx:if="{{videos.length === 0}}" class="empty-msg">暂无视频</view>
+      <view wx:else class="media-list videos">
+        <view class="media-item" wx:for="{{videos}}" wx:key="url">
+          <video class="video-player" src="{{item.url}}" controls show-center-play-btn />
+          <text class="caption">{{item.title || '视频'}}</text>
+          <text wx:if="{{item.description}}" class="desc">{{item.description}}</text>
+          <view class="video-actions">
+            <text class="link-btn" data-url="{{item.url}}" bindtap="onDownloadVideo">下载到相册</text>
+            <text class="link-btn" data-url="{{item.url}}" bindtap="onOpenVideo">打开</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

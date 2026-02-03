@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/list/list",
+    "pages/detail/detail",
+    "pages/form/form"
+  ],
+  "window": {
+    "navigationBarTitleText": "公寓管理",
+    "navigationBarBackgroundColor": "#1989fa",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "sitemapLocation": "sitemap.json"
+}

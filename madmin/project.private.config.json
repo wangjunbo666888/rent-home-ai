@@ -1,9 +1,9 @@
 {
-  "libVersion": "2.19.6",
-  "projectname": "frontmini",
+  "libVersion": "2.19.4",
+  "projectname": "madmin",
   "condition": {},
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "coverView": false,
     "lazyloadPlaceholderEnable": false,
     "skylineRenderEnable": false,
