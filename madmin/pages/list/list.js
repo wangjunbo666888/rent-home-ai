@@ -44,12 +44,21 @@ Page({
    * 拉取公寓列表
    */
   async fetchList() {
+    const config = require('../../config.js');
+    const url = (config.baseUrl || '') + '/api/admin/apartments';
+    console.log('[list] fetchList 开始', { url });
     this.setData({ loading: true, error: null });
     try {
       const res = await api.getApartmentList();
       const list = (res && res.data && Array.isArray(res.data)) ? res.data : [];
+      console.log('[list] fetchList 成功', { count: list.length, hasData: !!res.data });
       this.setData({ list, loading: false }, () => this.applyFilterAndPage());
     } catch (e) {
+      console.error('[list] fetchList 失败', {
+        message: e.message,
+        errMsg: e.errMsg,
+        stack: e.stack
+      });
       this.setData({
         loading: false,
         error: e.message || '加载失败',

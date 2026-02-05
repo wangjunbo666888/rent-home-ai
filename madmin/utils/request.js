@@ -12,23 +12,28 @@ const config = require('../config.js');
  */
 function request(options) {
   const url = options.url.startsWith('http') ? options.url : config.baseUrl + options.url;
+  console.log('[request] 发起请求', { method: options.method || 'GET', url });
   return new Promise((resolve, reject) => {
     wx.request({
       ...options,
       url,
       success(res) {
+        console.log('[request] 响应', { url, statusCode: res.statusCode });
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const data = res.data;
           if (data && data.success === false) {
+            console.error('[request] 业务失败', { url, message: data.message });
             reject(new Error(data.message || '请求失败'));
             return;
           }
           resolve(data);
         } else {
+          console.error('[request] HTTP 异常', { url, statusCode: res.statusCode, data: res.data });
           reject(new Error(res.data && res.data.message ? res.data.message : `HTTP ${res.statusCode}`));
         }
       },
       fail(err) {
+        console.error('[request] 请求失败', { url, errMsg: err.errMsg, err });
         reject(err);
       }
     });

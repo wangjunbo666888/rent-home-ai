@@ -63,18 +63,52 @@
   border-radius: 12rpx;
 }
 
-.page-list .table {
-  display: inline-block;
-  min-width: 1400rpx;
+.page-list .table-container {
+  display: flex;
+  width: 100%;
 }
 
-.page-list .table-head,
-.page-list .table-row {
+/* 左侧固定：名称（第一列） */
+.page-list .table-fixed {
+  width: 160rpx;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1rpx solid #eee;
+}
+
+.page-list .table-fixed-head,
+.page-list .table-fixed-row {
   display: flex;
   border-bottom: 1rpx solid #eee;
+  min-height: 72rpx;
+  box-sizing: border-box;
 }
 
-.page-list .table-head {
+.page-list .table-fixed-head {
+  background: #f8f8f8;
+  font-weight: bold;
+  color: #333;
+}
+
+.page-list .table-scroll {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+.page-list .table-scroll-content {
+  min-width: 1240rpx;
+}
+
+.page-list .table-scroll-head,
+.page-list .table-scroll-row {
+  display: flex;
+  border-bottom: 1rpx solid #eee;
+  min-height: 72rpx;
+  box-sizing: border-box;
+}
+
+.page-list .table-scroll-head {
   background: #f8f8f8;
   font-weight: bold;
   color: #333;

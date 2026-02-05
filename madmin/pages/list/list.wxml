@@ -21,34 +21,46 @@
   <block wx:else>
     <view class="summary">共 {{filteredList ? filteredList.length : 0}} 条，每页 {{pageSize}} 条</view>
 
-    <scroll-view scroll-x class="table-wrap" wx:if="{{pageList && pageList.length > 0}}">
-      <view class="table">
-        <view class="table-head">
-          <text class="col col-id">ID</text>
-          <text class="col col-name">名称</text>
-          <text class="col col-price">价格(元)</text>
-          <text class="col col-address">地址</text>
-          <text class="col col-district">区域</text>
-          <text class="col col-remarks">备注</text>
-          <text class="col col-actions">操作</text>
-        </view>
-        <view class="table-body">
-          <view class="table-row" wx:for="{{pageList}}" wx:key="id">
-            <text class="col col-id">{{item.id}}</text>
-            <text class="col col-name">{{item.name}}</text>
-            <text class="col col-price">{{item.minPrice}}~{{item.maxPrice}}</text>
-            <text class="col col-address">{{item.address}}</text>
-            <text class="col col-district">{{item.district}}</text>
-            <text class="col col-remarks">{{item.remarks || '-'}}</text>
-            <view class="col col-actions">
-              <text class="link-btn" data-id="{{item.id}}" bindtap="onViewDetail">查看</text>
-              <text class="link-btn" data-id="{{item.id}}" bindtap="onEdit">编辑</text>
-              <text class="link-btn danger" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">{{deletingId === item.id ? '删除中' : '删除'}}</text>
+    <view class="table-wrap" wx:if="{{pageList && pageList.length > 0}}">
+      <view class="table-container">
+        <view class="table-fixed">
+          <view class="table-head table-fixed-head">
+            <text class="col col-name">名称</text>
+          </view>
+          <view class="table-fixed-body">
+            <view class="table-row table-fixed-row" wx:for="{{pageList}}" wx:key="id">
+              <text class="col col-name">{{item.name}}</text>
             </view>
           </view>
         </view>
+        <scroll-view scroll-x class="table-scroll" show-scrollbar="{{true}}">
+          <view class="table-scroll-content">
+            <view class="table-head table-scroll-head">
+              <text class="col col-id">ID</text>
+              <text class="col col-price">价格(元)</text>
+              <text class="col col-address">地址</text>
+              <text class="col col-district">区域</text>
+              <text class="col col-remarks">备注</text>
+              <text class="col col-actions">操作</text>
+            </view>
+            <view class="table-scroll-body">
+              <view class="table-row table-scroll-row" wx:for="{{pageList}}" wx:key="id">
+                <text class="col col-id">{{item.id}}</text>
+                <text class="col col-price">{{item.minPrice}}~{{item.maxPrice}}</text>
+                <text class="col col-address">{{item.address}}</text>
+                <text class="col col-district">{{item.district}}</text>
+                <text class="col col-remarks">{{item.remarks || '-'}}</text>
+                <view class="col col-actions">
+                  <text class="link-btn" data-id="{{item.id}}" bindtap="onViewDetail">查看</text>
+                  <text class="link-btn" data-id="{{item.id}}" bindtap="onEdit">编辑</text>
+                  <text class="link-btn danger" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onDelete">{{deletingId === item.id ? '删除中' : '删除'}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
       </view>
-    </scroll-view>
+    </view>
 
     <view wx:else class="empty-msg">{{searchRegion || searchName ? '无匹配结果' : '暂无公寓数据'}}</view>
 
