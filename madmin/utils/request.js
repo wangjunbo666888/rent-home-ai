@@ -1,9 +1,21 @@
 /**
  * 封装 wx.request，统一请求后端 API（与 frontadmin 接口一致）
+ * 管理端请求自动携带 adminToken，401 时清除 token 并跳转登录
  * @module utils/request
  */
 
 const config = require('../config.js');
+
+const TOKEN_KEY = 'adminToken';
+
+/**
+ * 401 时清除 token 并跳转登录页
+ */
+function handle401() {
+  wx.removeStorageSync(TOKEN_KEY);
+  wx.showToast({ title: '登录已失效，请重新登录', icon: 'none' });
+  wx.reLaunch({ url: '/pages/login/login' });
+}
 
 /**
  * 发起请求
@@ -12,13 +24,25 @@ const config = require('../config.js');
  */
 function request(options) {
   const url = options.url.startsWith('http') ? options.url : config.baseUrl + options.url;
+  const token = wx.getStorageSync(TOKEN_KEY);
+  const headers = { ...(options.header || {}) };
+  if (token) {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+
   console.log('[request] 发起请求', { method: options.method || 'GET', url });
   return new Promise((resolve, reject) => {
     wx.request({
       ...options,
       url,
+      header: headers,
       success(res) {
         console.log('[request] 响应', { url, statusCode: res.statusCode });
+        if (res.statusCode === 401) {
+          handle401();
+          reject(new Error('请先登录'));
+          return;
+        }
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const data = res.data;
           if (data && data.success === false) {
@@ -97,12 +121,20 @@ function del(url) {
 function uploadFile(filePath, type = 'image') {
   return new Promise((resolve, reject) => {
     const url = config.baseUrl + '/api/admin/upload';
+    const token = wx.getStorageSync(TOKEN_KEY);
+    const header = token ? { 'Authorization': 'Bearer ' + token } : {};
     wx.uploadFile({
       url,
       filePath,
       name: 'file',
       formData: { type },
+      header,
       success(res) {
+        if (res.statusCode === 401) {
+          handle401();
+          reject(new Error('请先登录'));
+          return;
+        }
         if (res.statusCode >= 200 && res.statusCode < 300) {
           let data;
           try {

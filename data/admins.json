@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ADM001",
+    "username": "wangbo188",
+    "password": "135_supei",
+    "createdAt": "2026-02-06T00:00:00.000Z",
+    "updatedAt": "2026-02-06T00:00:00.000Z"
+  },
+  {
+    "id": "ADM002",
+    "username": "mingming188",
+    "password": "135_mingming",
+    "createdAt": "2026-02-06T00:00:00.000Z",
+    "updatedAt": "2026-02-06T00:00:00.000Z"
+  }
+]

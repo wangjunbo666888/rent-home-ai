@@ -1,0 +1,39 @@
+<view class="page-login">
+  <view class="header">
+    <text class="title">公寓管理</text>
+    <text class="desc">管理员登录</text>
+  </view>
+
+  <view class="form">
+    <view class="field">
+      <text class="label">用户名</text>
+      <input
+        class="input"
+        type="text"
+        placeholder="请输入用户名"
+        placeholder-class="input-placeholder"
+        value="{{username}}"
+        bindinput="onUsernameInput"
+      />
+    </view>
+    <view class="field">
+      <text class="label">密码</text>
+      <input
+        class="input"
+        type="password"
+        placeholder="请输入密码"
+        placeholder-class="input-placeholder"
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+    </view>
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+    <button
+      class="btn-login"
+      disabled="{{loading || !username || !password}}"
+      bindtap="onLogin"
+    >
+      {{loading ? '登录中...' : '登录'}}
+    </button>
+  </view>
+</view>

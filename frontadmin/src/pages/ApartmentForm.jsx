@@ -5,10 +5,11 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { authFetch } from '../utils/auth.js';
 import './ApartmentForm.css';
 
 const API_BASE = '/api/admin/apartments';
-const SUGGESTION_API = '/api/suggestion';
+const SUGGESTION_API = '/api/admin/suggestion';
 const REGION = '北京市';
 const DEBOUNCE_MS = 300;
 
@@ -42,7 +43,7 @@ function ApartmentForm() {
 
   /** 拉取区域下拉 */
   useEffect(() => {
-    fetch('/api/admin/districts')
+    authFetch('/api/admin/districts')
       .then(res => res.json())
       .then(json => { if (json.success) setDistricts(json.data || []); })
       .catch(() => setDistricts([]));
@@ -54,7 +55,7 @@ function ApartmentForm() {
     let cancelled = false;
     setFetchLoading(true);
     setError(null);
-    fetch(`${API_BASE}/${id}`)
+    authFetch(`${API_BASE}/${id}`)
       .then(res => res.json())
       .then(json => {
         if (cancelled) return;
@@ -86,7 +87,7 @@ function ApartmentForm() {
       return;
     }
     setSuggestionLoading(true);
-    fetch(`${SUGGESTION_API}?keyword=${encodeURIComponent(keyword.trim())}&region=${encodeURIComponent(REGION)}`)
+    authFetch(`${SUGGESTION_API}?keyword=${encodeURIComponent(keyword.trim())}&region=${encodeURIComponent(REGION)}`)
       .then(res => res.json())
       .then(json => {
         if (json.success && Array.isArray(json.data)) {
@@ -147,7 +148,7 @@ function ApartmentForm() {
 
     /** 同一区域内名称重复校验 */
     try {
-      const checkRes = await fetch(`${API_BASE}/check-name`, {
+      const checkRes = await authFetch(`${API_BASE}/check-name`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -178,7 +179,7 @@ function ApartmentForm() {
     try {
       const url = isEdit ? `${API_BASE}/${id}` : API_BASE;
       const method = isEdit ? 'PUT' : 'POST';
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -207,7 +208,7 @@ function ApartmentForm() {
     fd.append('file', file);
     fd.append('type', 'image');
     try {
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      const res = await authFetch('/api/admin/upload', { method: 'POST', body: fd });
       const json = await res.json();
       if (json.success && json.url) {
         const title = `图片${(form.images.length || 0) + 1}`;
@@ -228,7 +229,7 @@ function ApartmentForm() {
     fd.append('file', file);
     fd.append('type', 'video');
     try {
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      const res = await authFetch('/api/admin/upload', { method: 'POST', body: fd });
       const json = await res.json();
       if (json.success && json.url) {
         const title = `视频${(form.videos.length || 0) + 1}`;

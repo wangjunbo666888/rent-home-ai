@@ -13,7 +13,9 @@ import { uploadToCos } from './utils/cosUpload.js';
 import { BEIJING_DISTRICTS } from './constants/districts.js';
 import authRouter from './routes/auth.js';
 import subscriptionRouter from './routes/subscription.js';
+import adminAuthRouter from './routes/adminAuth.js';
 import { requireAuth, requireSubscription } from './middleware/auth.js';
+import { requireAdminAuth } from './middleware/requireAdminAuth.js';
 
 // 加载环境变量
 dotenv.config();
@@ -29,6 +31,8 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 /** 订阅订单（需登录） */
 app.use('/api/subscription', subscriptionRouter);
+/** 管理端登录（无需 token） */
+app.use('/api/admin/auth', adminAuthRouter);
 
 /** 文件上传：内存存储，供 COS 上传使用 */
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
@@ -183,20 +187,36 @@ function isDuplicateName(name, district, excludeId) {
   );
 }
 
+/** 管理端 - 地址联想（供表单输入） */
+app.get('/api/admin/suggestion', requireAdminAuth, async (req, res) => {
+  try {
+    const keyword = req.query.keyword;
+    const region = req.query.region || '北京市';
+    if (!keyword || typeof keyword !== 'string') {
+      return res.json({ success: true, data: [] });
+    }
+    const data = await getSuggestion(keyword, region);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('❌ 管理端地址联想失败:', error.message);
+    res.status(500).json({ success: false, message: error.message || '请求失败', data: [] });
+  }
+});
+
 /** 管理端 - 获取北京区域下拉列表 */
-app.get('/api/admin/districts', (req, res) => {
+app.get('/api/admin/districts', requireAdminAuth, (req, res) => {
   res.json({ success: true, data: BEIJING_DISTRICTS });
 });
 
 /** 管理端 - 检查同一区域内公寓名是否重复 */
-app.post('/api/admin/apartments/check-name', (req, res) => {
+app.post('/api/admin/apartments/check-name', requireAdminAuth, (req, res) => {
   const { name, district, id: excludeId } = req.body || {};
   const duplicate = isDuplicateName(name, district, excludeId);
   res.json({ success: true, duplicate });
 });
 
 /** 管理端 - 上传文件到腾讯云 COS（图片或视频） */
-app.post('/api/admin/upload', upload.single('file'), async (req, res) => {
+app.post('/api/admin/upload', requireAdminAuth, upload.single('file'), async (req, res) => {
   try {
     if (!req.file || !req.file.buffer) {
       return res.status(400).json({ success: false, message: '请选择文件' });
@@ -212,7 +232,7 @@ app.post('/api/admin/upload', upload.single('file'), async (req, res) => {
 });
 
 /** 管理端 - 获取公寓列表 */
-app.get('/api/admin/apartments', (req, res) => {
+app.get('/api/admin/apartments', requireAdminAuth, (req, res) => {
   res.json({
     success: true,
     data: apartmentsData,
@@ -221,7 +241,7 @@ app.get('/api/admin/apartments', (req, res) => {
 });
 
 /** 管理端 - 获取单条公寓 */
-app.get('/api/admin/apartments/:id', (req, res) => {
+app.get('/api/admin/apartments/:id', requireAdminAuth, (req, res) => {
   const item = apartmentsData.find(a => a.id === req.params.id);
   if (!item) {
     return res.status(404).json({ success: false, message: '公寓不存在' });
@@ -230,7 +250,7 @@ app.get('/api/admin/apartments/:id', (req, res) => {
 });
 
 /** 管理端 - 新增公寓 */
-app.post('/api/admin/apartments', async (req, res) => {
+app.post('/api/admin/apartments', requireAdminAuth, async (req, res) => {
   try {
     const body = req.body || {};
     const minPrice = Number(body.minPrice);
@@ -270,7 +290,7 @@ app.post('/api/admin/apartments', async (req, res) => {
 });
 
 /** 管理端 - 更新公寓 */
-app.put('/api/admin/apartments/:id', async (req, res) => {
+app.put('/api/admin/apartments/:id', requireAdminAuth, async (req, res) => {
   try {
     const idx = apartmentsData.findIndex(a => a.id === req.params.id);
     if (idx === -1) {
@@ -312,7 +332,7 @@ app.put('/api/admin/apartments/:id', async (req, res) => {
 });
 
 /** 管理端 - 删除公寓 */
-app.delete('/api/admin/apartments/:id', async (req, res) => {
+app.delete('/api/admin/apartments/:id', requireAdminAuth, async (req, res) => {
   try {
     const idx = apartmentsData.findIndex(a => a.id === req.params.id);
     if (idx === -1) {

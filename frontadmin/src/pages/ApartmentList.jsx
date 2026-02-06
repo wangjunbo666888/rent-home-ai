@@ -3,6 +3,7 @@
  */
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { authFetch, clearAdminToken } from '../utils/auth.js';
 import './ApartmentList.css';
 
 const API_BASE = '/api/admin/apartments';
@@ -23,7 +24,7 @@ function ApartmentList() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(API_BASE);
+      const res = await authFetch(API_BASE);
       const json = await res.json();
       if (json.success) {
         setList(json.data || []);
@@ -70,7 +71,7 @@ function ApartmentList() {
     if (!window.confirm(`确定要删除「${name || id}」吗？`)) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${API_BASE}/${id}`, { method: 'DELETE' });
       const json = await res.json();
       if (json.success) {
         setList(prev => prev.filter(item => item.id !== id));
@@ -102,6 +103,13 @@ function ApartmentList() {
         <h1>公寓管理</h1>
         <div className="apartment-list-actions">
           <Link to="/new" className="btn btn-primary">新增公寓</Link>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => { clearAdminToken(); window.location.href = '/login'; }}
+          >
+            退出登录
+          </button>
         </div>
       </header>
 

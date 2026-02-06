@@ -3,6 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { authFetch } from '../utils/auth.js';
 import './ApartmentForm.css';
 import './ApartmentDetail.css';
 
@@ -19,7 +20,7 @@ function ApartmentDetail() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetch(`${API_BASE}/${id}`)
+    authFetch(`${API_BASE}/${id}`)
       .then(res => res.json())
       .then(json => {
         if (cancelled) return;
