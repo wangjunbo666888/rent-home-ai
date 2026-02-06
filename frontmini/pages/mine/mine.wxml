@@ -16,13 +16,13 @@
         </view>
         <view class="user-info">
           <view class="info-row">
-            <text class="info-label">手机号</text>
-            <text class="info-value">{{user.phoneMasked}}</text>
+            <text class="info-line">
+              <text class="info-label">手机号</text> <text class="info-value">{{user.phoneMasked}}</text>
+            </text>
           </view>
           <view class="info-row">
-            <text class="info-label">订阅状态</text>
-            <text class="info-value {{hasActiveSubscription ? 'status-ok' : 'status-none'}}">
-              {{hasActiveSubscription && subscriptionExpireAt ? ('已开通至 ' + subscriptionExpireAt) : '未开通'}}
+            <text class="info-line">
+              <text class="info-label">订阅状态</text> <text class="info-value {{hasActiveSubscription ? 'status-ok' : 'status-none'}}">{{hasActiveSubscription && subscriptionExpireAt ? ('已开通至 ' + subscriptionExpireAt) : '未开通'}}</text>
             </text>
           </view>
         </view>
@@ -43,12 +43,12 @@
           wx:for="{{orders}}"
           wx:key="id"
         >
-          <text class="order-id">{{item.id}}</text>
-          <text class="order-plan">{{item.plan === 'month' ? '月付' : '季付'}}</text>
-          <text class="order-status {{item.payStatus === 'paid' ? 'paid' : ''}}">
-            {{item.payStatus === 'paid' ? '已支付' : '待支付'}}
+          <text class="order-line">
+            <text class="order-id">{{item.id}} </text>
+            <text class="order-plan">{{item.plan === 'month' ? '月付' : '季付'}} </text>
+            <text class="order-status {{item.payStatus === 'paid' ? 'paid' : ''}}">{{item.payStatus === 'paid' ? '已支付' : '待支付'}}</text>
+            <text class="order-expire" wx:if="{{item.expireAtShort}}"> 至 {{item.expireAtShort}}</text>
           </text>
-          <text class="order-expire" wx:if="{{item.expireAtShort}}">至 {{item.expireAtShort}}</text>
         </view>
       </view>
 
