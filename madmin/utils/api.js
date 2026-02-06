@@ -71,14 +71,14 @@ function getDistricts() {
 }
 
 /**
- * 地址联想
+ * 地址联想（管理端接口，需 adminToken）
  * @param {string} keyword
  * @returns {Promise<{ success: boolean, data: Array }>}
  */
 function suggestion(keyword) {
   const region = encodeURIComponent(config.suggestionRegion || '北京市');
   const k = encodeURIComponent(keyword);
-  return get(`/api/suggestion?keyword=${k}&region=${region}`);
+  return get(`/api/admin/suggestion?keyword=${k}&region=${region}`);
 }
 
 /**

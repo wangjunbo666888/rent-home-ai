@@ -97,7 +97,7 @@
 }
 
 .page-list .table-scroll-content {
-  min-width: 1240rpx;
+  min-width: 1340rpx;
 }
 
 .page-list .table-scroll-head,
@@ -129,6 +129,7 @@
 .page-list .col-price { width: 160rpx; }
 .page-list .col-address { width: 480rpx; }
 .page-list .col-district { width: 100rpx; }
+.page-list .col-pet { width: 100rpx; }
 .page-list .col-remarks { width: 160rpx; }
 .page-list .col-actions {
   width: 200rpx;

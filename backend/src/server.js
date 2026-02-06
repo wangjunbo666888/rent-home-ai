@@ -268,6 +268,13 @@ app.post('/api/admin/apartments', requireAdminAuth, async (req, res) => {
     if (apartmentsData.some(a => a.id === id)) {
       return res.status(400).json({ success: false, message: 'ID 已存在' });
     }
+    const normalizedVideos = (Array.isArray(body.videos) ? body.videos : []).map(v => ({
+      url: v.url || '',
+      title: v.title != null ? v.title : `视频`,
+      description: v.description != null ? v.description : '',
+      layoutType: v.layoutType ?? '开间',
+      price: typeof v.price === 'number' ? v.price : (Number(v.price) || 0)
+    }));
     const newItem = {
       id,
       name: body.name ?? '',
@@ -276,8 +283,9 @@ app.post('/api/admin/apartments', requireAdminAuth, async (req, res) => {
       address: body.address ?? '',
       district: body.district ?? '',
       remarks: body.remarks ?? '',
+      pet: body.pet ?? '禁养',
       images: Array.isArray(body.images) ? body.images : [],
-      videos: Array.isArray(body.videos) ? body.videos : []
+      videos: normalizedVideos
     };
     apartmentsData.push(newItem);
     await saveApartments(apartmentsData);
@@ -310,6 +318,15 @@ app.put('/api/admin/apartments/:id', requireAdminAuth, async (req, res) => {
     if (isDuplicateName(name, district, req.params.id)) {
       return res.status(400).json({ success: false, message: '公寓名称重复，同一区域内不能重名' });
     }
+    const normalizedVideos = Array.isArray(body.videos)
+      ? body.videos.map(v => ({
+          url: v.url || '',
+          title: v.title != null ? v.title : '视频',
+          description: v.description != null ? v.description : '',
+          layoutType: v.layoutType ?? '开间',
+          price: typeof v.price === 'number' ? v.price : (Number(v.price) || 0)
+        }))
+      : (apartmentsData[idx].videos || []);
     const updated = {
       ...apartmentsData[idx],
       name,
@@ -318,8 +335,9 @@ app.put('/api/admin/apartments/:id', requireAdminAuth, async (req, res) => {
       address: body.address !== undefined ? body.address : apartmentsData[idx].address,
       district,
       remarks: body.remarks !== undefined ? body.remarks : apartmentsData[idx].remarks,
+      pet: body.pet !== undefined ? body.pet : (apartmentsData[idx].pet ?? '禁养'),
       images: Array.isArray(body.images) ? body.images : (apartmentsData[idx].images || []),
-      videos: Array.isArray(body.videos) ? body.videos : (apartmentsData[idx].videos || [])
+      videos: normalizedVideos
     };
     apartmentsData[idx] = updated;
     await saveApartments(apartmentsData);

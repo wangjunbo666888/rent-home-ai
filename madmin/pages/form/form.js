@@ -4,6 +4,11 @@
  */
 const api = require('../../utils/api.js');
 
+/** 宠物选项（key 与 value 均为文字） */
+const PET_OPTIONS = ['禁养', '可养猫，不可养狗', '可养猫，可养小狗', '不限制'];
+/** 户型选项（默认项：开间） */
+const LAYOUT_TYPE_OPTIONS = ['开间', '复式', '隔断套间', '小院开间', '一室一厅', '两室一厅', '三室一厅', '其他'];
+
 const defaultForm = {
   name: '',
   minPrice: '',
@@ -11,6 +16,7 @@ const defaultForm = {
   address: '',
   district: '',
   remarks: '',
+  pet: PET_OPTIONS[0],
   images: [],
   videos: []
 };
@@ -24,6 +30,9 @@ Page({
     form: { ...defaultForm },
     districts: [],
     districtIndex: 0,
+    petOptions: PET_OPTIONS,
+    petIndex: 0,
+    layoutTypeOptions: LAYOUT_TYPE_OPTIONS,
     loading: false,
     fetchLoading: false,
     error: null,
@@ -60,6 +69,17 @@ Page({
     try {
       const res = await api.getApartmentDetail(id);
       const d = res.data || {};
+      const videos = (Array.isArray(d.videos) ? d.videos : []).map(v => {
+        const layoutType = (v.layoutType && LAYOUT_TYPE_OPTIONS.includes(v.layoutType)) ? v.layoutType : (d.layoutType && LAYOUT_TYPE_OPTIONS.includes(d.layoutType) ? d.layoutType : LAYOUT_TYPE_OPTIONS[0]);
+        return {
+          url: v.url || '',
+          title: v.title != null ? v.title : '视频',
+          description: v.description != null ? v.description : '',
+          layoutType,
+          layoutTypeIndex: Math.max(0, LAYOUT_TYPE_OPTIONS.indexOf(layoutType)),
+          price: v.price !== undefined && v.price !== null ? String(v.price) : (d.price !== undefined && d.price !== null ? String(d.price) : '')
+        };
+      });
       const form = {
         name: d.name ?? '',
         minPrice: d.minPrice !== undefined && d.minPrice !== null ? String(d.minPrice) : '',
@@ -67,12 +87,14 @@ Page({
         address: d.address ?? '',
         district: d.district ?? '',
         remarks: d.remarks ?? '',
+        pet: (d.pet && PET_OPTIONS.includes(d.pet)) ? d.pet : PET_OPTIONS[0],
         images: Array.isArray(d.images) ? d.images : [],
-        videos: Array.isArray(d.videos) ? d.videos : []
+        videos
       };
       const districts = this.data.districts || [];
       const districtIndex = Math.max(0, districts.indexOf(form.district));
-      this.setData({ form, districtIndex, fetchLoading: false });
+      const petIndex = Math.max(0, PET_OPTIONS.indexOf(form.pet));
+      this.setData({ form, districtIndex, petIndex, fetchLoading: false });
     } catch (e) {
       this.setData({
         fetchLoading: false,
@@ -132,6 +154,30 @@ Page({
     this.setData({ districtIndex: index, form });
   },
 
+  /** 宠物下拉变更 */
+  onPetChange(e) {
+    const index = e.detail && e.detail.value !== undefined ? Number(e.detail.value) : 0;
+    const petOptions = this.data.petOptions || [];
+    const pet = petOptions[index] || petOptions[0];
+    const form = { ...this.data.form, pet };
+    this.setData({ petIndex: index, form });
+  },
+
+  /** 单个视频的户型下拉变更 */
+  onVideoLayoutTypeChange(e) {
+    const videoIndex = e.currentTarget.dataset.index !== undefined ? Number(e.currentTarget.dataset.index) : 0;
+    const pickerIndex = e.detail && e.detail.value !== undefined ? Number(e.detail.value) : 0;
+    const layoutTypeOptions = this.data.layoutTypeOptions || [];
+    const layoutType = layoutTypeOptions[pickerIndex] || layoutTypeOptions[0];
+    const form = { ...this.data.form };
+    const videos = [...(form.videos || [])];
+    if (videos[videoIndex]) {
+      videos[videoIndex] = { ...videos[videoIndex], layoutType, layoutTypeIndex: pickerIndex };
+      form.videos = videos;
+      this.setData({ form });
+    }
+  },
+
   validateRent() {
     const { form } = this.data;
     const min = Number(form.minPrice);
@@ -183,15 +229,23 @@ Page({
     }
 
     this.setData({ loading: true });
+    const videos = (form.videos || []).map(v => ({
+      url: v.url || '',
+      title: v.title != null ? v.title : '视频',
+      description: v.description != null ? v.description : '',
+      layoutType: (v.layoutType && LAYOUT_TYPE_OPTIONS.includes(v.layoutType)) ? v.layoutType : LAYOUT_TYPE_OPTIONS[0],
+      price: Number(v.price) || 0
+    }));
     const payload = {
       name: form.name.trim(),
       district: form.district.trim(),
       address: (form.address || '').trim(),
       remarks: (form.remarks || '').trim(),
+      pet: (form.pet && PET_OPTIONS.includes(form.pet)) ? form.pet : PET_OPTIONS[0],
       minPrice: Number(form.minPrice) || 0,
       maxPrice: Number(form.maxPrice) || 0,
       images: form.images || [],
-      videos: form.videos || []
+      videos
     };
 
     try {
@@ -255,10 +309,11 @@ Page({
     this.setData({ form, uploadingImage: false });
   },
 
-  /** 选择并上传视频（不传 maxDuration，选完后在 success 里校验时长，避免真机兼容问题） */
+  /** 选择并上传视频（不传 maxDuration，选完后在 success 里校验时长与大小，避免真机兼容问题） */
   onChooseVideo() {
     if (this.data.uploadingVideo) return;
     const MAX_VIDEO_SECONDS = 300; // 5 分钟
+    const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB，与后端 multer 限制一致
     wx.chooseMedia({
       count: 1,
       mediaType: ['video'],
@@ -272,7 +327,25 @@ Page({
           wx.showToast({ title: '请选择 5 分钟以内的视频', icon: 'none' });
           return;
         }
-        this.uploadVideoOne(file.tempFilePath);
+        wx.getFileInfo({
+          filePath: file.tempFilePath,
+          success: (info) => {
+            const size = (info && info.size) || 0;
+            if (size > MAX_VIDEO_BYTES) {
+              wx.showToast({
+                title: '视频不能超过 50MB，请选择更短的视频或使用其他应用压缩后重试',
+                icon: 'none',
+                duration: 3000
+              });
+              return;
+            }
+            this.uploadVideoOne(file.tempFilePath);
+          },
+          fail: () => {
+            // 无法获取大小时仍允许上传，由后端限制兜底
+            this.uploadVideoOne(file.tempFilePath);
+          }
+        });
       },
       fail: (err) => {
         const errMsg = (err && err.errMsg) || '';
@@ -293,7 +366,14 @@ Page({
         const form = { ...this.data.form };
         const videos = form.videos || [];
         const title = `视频${videos.length + 1}`;
-        videos.push({ url: result.url, title, description: '' });
+        videos.push({
+          url: result.url,
+          title,
+          description: '',
+          layoutType: LAYOUT_TYPE_OPTIONS[0],
+          layoutTypeIndex: 0,
+          price: ''
+        });
         form.videos = videos;
         this.setData({ form });
       }

@@ -2,10 +2,6 @@
   <view wx:if="{{fetchLoading}}" class="loading-wrap">加载中...</view>
 
   <block wx:else>
-    <view class="header-actions">
-      <button class="btn btn-secondary btn-sm" bindtap="onBack">返回列表</button>
-    </view>
-
     <view wx:if="{{error}}" class="error-msg">{{error}}</view>
 
     <view class="form-card">
@@ -44,6 +40,12 @@
         <text class="form-label">备注</text>
         <textarea class="form-input form-textarea" placeholder="有班车、近地铁等" value="{{form.remarks}}" data-field="remarks" bindinput="onInput" />
       </view>
+      <view class="form-row">
+        <text class="form-label">宠物</text>
+        <picker mode="selector" range="{{petOptions}}" value="{{petIndex}}" bindchange="onPetChange">
+          <view class="picker-value">{{form.pet || '请选择宠物'}}</view>
+        </picker>
+      </view>
     </view>
 
     <view class="form-card">
@@ -64,7 +66,16 @@
       <view wx:if="{{form.videos && form.videos.length > 0}}" class="media-list videos">
         <view class="media-item" wx:for="{{form.videos}}" wx:key="url">
           <video class="video-player" src="{{item.url}}" controls show-center-play-btn />
-          <input class="title-input" placeholder="视频标题" value="{{item.title}}" data-index="{{index}}" data-field="title" bindinput="updateVideoField" />
+          <view class="form-row form-row-extra">
+            <text class="form-label">户型</text>
+            <picker mode="selector" range="{{layoutTypeOptions}}" value="{{item.layoutTypeIndex}}" bindchange="onVideoLayoutTypeChange" data-index="{{index}}">
+              <view class="picker-value">{{item.layoutType || '请选择户型'}}</view>
+            </picker>
+          </view>
+          <view class="form-row inline">
+            <text class="form-label">价格（元）</text>
+            <input class="form-input" type="digit" placeholder="价格" value="{{item.price}}" data-index="{{index}}" data-field="price" bindinput="updateVideoField" />
+          </view>
           <input class="desc-input" placeholder="描述（可选）" value="{{item.description}}" data-index="{{index}}" data-field="description" bindinput="updateVideoField" />
           <text class="link-btn danger" data-index="{{index}}" bindtap="removeVideo">删除</text>
         </view>

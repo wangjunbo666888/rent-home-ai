@@ -6,6 +6,9 @@
     "maxPrice": 3500,
     "address": "北京市朝阳区化工东里3号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "有班车，包取暖，宠物友好，可养狗和猫",
     "images": [
       {
@@ -32,6 +35,9 @@
     "maxPrice": 2800,
     "address": "北京市朝阳区化工路甲5号附近603文化产业园",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "有阳台",
     "images": [
       {
@@ -58,6 +64,9 @@
     "maxPrice": 3200,
     "address": "北京市朝阳区双合地铁站东行10米",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "近地铁，免费停车"
   },
   {
@@ -67,6 +76,9 @@
     "maxPrice": 3500,
     "address": "北京市朝阳区管庄南街7号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -76,6 +88,9 @@
     "maxPrice": 2518,
     "address": "北京市朝阳区朝阳路辅路与管庄路交叉口东南220米",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "loft复试"
   },
   {
@@ -85,6 +100,9 @@
     "maxPrice": 5800,
     "address": "北京市朝阳区十里堡南里西路莱锦文化创意产业园",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -94,6 +112,9 @@
     "maxPrice": 2500,
     "address": "北京市通州区永顺镇永顺西马庄甲6号美航印刷厂",
     "district": "通州区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -103,6 +124,9 @@
     "maxPrice": 2650,
     "address": "北京市通州区兴旺北路西潞苑二街与潞通新路交叉口",
     "district": "通州区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -112,6 +136,9 @@
     "maxPrice": 3500,
     "address": "北京市朝阳区半壁店602号盛世三合文化产业园",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -121,6 +148,9 @@
     "maxPrice": 3200,
     "address": "北京市朝阳区高碑店医药物流区1525号御河大厦A座",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -130,6 +160,9 @@
     "maxPrice": 2700,
     "address": "北京市通州区运河大街（北运河西地铁站B东北口步行450米）",
     "district": "通州区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -139,6 +172,9 @@
     "maxPrice": 3000,
     "address": "北京市朝阳区化工路与垡头路交叉口南320米",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -148,6 +184,9 @@
     "maxPrice": 3850,
     "address": "北京市朝阳区南磨房燕保百湾家园",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -157,6 +196,9 @@
     "maxPrice": 4000,
     "address": "北京市朝阳区大郊亭北街东18号正南方向60米",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -166,6 +208,9 @@
     "maxPrice": 2400,
     "address": "北京市朝阳区高碑店路与G1辅路交汇处",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -175,6 +220,9 @@
     "maxPrice": 3600,
     "address": "北京市朝阳区京城梨园步道雨禾青年公寓",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -184,6 +232,9 @@
     "maxPrice": 4100,
     "address": "北京市朝阳区定福家园北里1号院3号楼",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -193,6 +244,9 @@
     "maxPrice": 2800,
     "address": "北京市朝阳区姚家园北一路808产业园",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -202,6 +256,9 @@
     "maxPrice": 3800,
     "address": "北京市朝阳区四路居368号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -211,6 +268,9 @@
     "maxPrice": 5000,
     "address": "北京市朝阳区望京望花路西八间北里15号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -220,6 +280,9 @@
     "maxPrice": 5500,
     "address": "北京市东城区长青南路鸿运花园",
     "district": "东城区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -229,6 +292,9 @@
     "maxPrice": 3700,
     "address": "北京市朝阳区武圣路松榆西里6号楼",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "",
     "images": [
       {
@@ -260,6 +326,9 @@
     "maxPrice": 4200,
     "address": "北京市朝阳区八里庄街道延静里中街20号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": ""
   },
   {
@@ -269,6 +338,9 @@
     "maxPrice": 3600,
     "address": "北京市通州区玉带河东街6号",
     "district": "通州区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "近地铁",
     "images": [],
     "videos": []
@@ -280,6 +352,9 @@
     "maxPrice": 5900,
     "address": "北京市朝阳区八里庄街道延静里中街20号临玉林烤鸭店旁",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "近地铁",
     "images": [
       {
@@ -311,6 +386,9 @@
     "maxPrice": 3400,
     "address": "北京市朝阳区建国门外大街1号",
     "district": "东城区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "",
     "images": [],
     "videos": []
@@ -322,6 +400,9 @@
     "maxPrice": 5000,
     "address": "北京市大兴区金星西路19号",
     "district": "朝阳区",
+    "pet": "禁养",
+    "layoutType": "开间",
+    "price": 0,
     "remarks": "",
     "images": [
       {
@@ -336,5 +417,39 @@
         "description": ""
       }
     ]
+  },
+  {
+    "id": "APT0028",
+    "name": "六里桥家园",
+    "minPrice": 2500,
+    "maxPrice": 3500,
+    "address": "北京市丰台区广安路280号",
+    "district": "丰台区",
+    "remarks": "宠物友好",
+    "pet": "可养猫，可养小狗",
+    "images": [
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/images/1770390234352-0vnr9k2opdfl.JPG",
+        "title": "图片1"
+      }
+    ],
+    "videos": [
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/videos/1770390309068-sv87yqqxl9l.mp4",
+        "title": "视频1",
+        "description": "121212",
+        "layoutType": "小院开间",
+        "price": 4000
+      },
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/videos/1770391470333-w2p659qhz.mp4",
+        "title": "视频2",
+        "description": "lalalal",
+        "layoutType": "复式",
+        "price": 3512
+      }
+    ],
+    "layoutType": "复式",
+    "price": 3900
   }
 ]
