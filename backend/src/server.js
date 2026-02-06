@@ -11,6 +11,9 @@ import { loadApartments, saveApartments } from './utils/dataLoader.js';
 import { getSuggestion } from './utils/tencentMapApi.js';
 import { uploadToCos } from './utils/cosUpload.js';
 import { BEIJING_DISTRICTS } from './constants/districts.js';
+import authRouter from './routes/auth.js';
+import subscriptionRouter from './routes/subscription.js';
+import { requireAuth, requireSubscription } from './middleware/auth.js';
 
 // 加载环境变量
 dotenv.config();
@@ -21,6 +24,11 @@ const PORT = process.env.PORT || 3001;
 // 中间件
 app.use(cors());
 app.use(express.json());
+
+/** 登录与用户信息（无需订阅） */
+app.use('/api/auth', authRouter);
+/** 订阅订单（需登录） */
+app.use('/api/subscription', subscriptionRouter);
 
 /** 文件上传：内存存储，供 COS 上传使用 */
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
@@ -47,11 +55,11 @@ app.get('/api/health', (req, res) => {
 });
 
 /**
- * 租房匹配接口
+ * 租房匹配接口（需登录且订阅有效）
  * POST /api/match
  * Body: { workAddress: string, commuteTime: number, budget: number }
  */
-app.post('/api/match', async (req, res) => {
+app.post('/api/match', requireAuth, requireSubscription, async (req, res) => {
   try {
     const { workAddress, commuteTime, budget } = req.body;
 
@@ -99,10 +107,10 @@ app.post('/api/match', async (req, res) => {
 });
 
 /**
- * 上班地址输入提示（联想）
+ * 上班地址输入提示（联想）（需登录且订阅有效）
  * GET /api/suggestion?keyword=亮马河&region=北京市
  */
-app.get('/api/suggestion', async (req, res) => {
+app.get('/api/suggestion', requireAuth, requireSubscription, async (req, res) => {
   try {
     const keyword = req.query.keyword;
     const region = req.query.region || '北京市';

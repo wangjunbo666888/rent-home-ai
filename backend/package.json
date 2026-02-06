@@ -18,6 +18,7 @@
     "axios": "^1.6.2",
     "xlsx": "^0.18.5",
     "multer": "^1.4.5-lts.1",
-    "cos-nodejs-sdk-v5": "^2.14.3"
+    "cos-nodejs-sdk-v5": "^2.14.3",
+    "jsonwebtoken": "^9.0.2"
   }
 }
