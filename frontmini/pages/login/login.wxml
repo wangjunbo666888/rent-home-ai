@@ -1,0 +1,50 @@
+<view class="page-login">
+  <view class="header">
+    <text class="title">速配魔方</text>
+    <text class="desc">中介端 · 手机号登录</text>
+  </view>
+
+  <view class="form">
+    <view class="field">
+      <text class="label">手机号</text>
+      <input
+        class="input"
+        type="number"
+        maxlength="11"
+        placeholder="请输入手机号"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+    <view class="field">
+      <text class="label">验证码</text>
+      <view class="code-row">
+        <input
+          class="input code-input"
+          type="number"
+          maxlength="6"
+          placeholder="请输入验证码"
+          value="{{code}}"
+          bindinput="onCodeInput"
+        />
+        <button
+          class="btn-code"
+          disabled="{{codeCountdown > 0 || sending}}"
+          bindtap="onSendCode"
+        >
+          {{codeCountdown > 0 ? codeCountdown + 's 后重发' : '获取验证码'}}
+        </button>
+      </view>
+    </view>
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+    <button
+      class="btn-login"
+      disabled="{{loading || !phone || !code}}"
+      bindtap="onLogin"
+    >
+      {{loading ? '登录中...' : '登录'}}
+    </button>
+  </view>
+
+  <view class="tip">登录即表示同意使用本中介端服务</view>
+</view>

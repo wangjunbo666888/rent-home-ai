@@ -1,0 +1,24 @@
+[
+  {
+    "id": "SUB000001",
+    "userId": "U0001",
+    "plan": "month",
+    "amount": 2900,
+    "payStatus": "paid",
+    "paidAt": "2026-02-06T03:57:57.565Z",
+    "expireAt": "2026-03-08T03:57:57.565Z",
+    "createdAt": "2026-02-06T03:57:38.418Z",
+    "wxTransactionId": null
+  },
+  {
+    "id": "SUB000002",
+    "userId": "U0002",
+    "plan": "quarter",
+    "amount": 7900,
+    "payStatus": "paid",
+    "paidAt": "2026-02-06T04:06:31.819Z",
+    "expireAt": "2026-05-07T04:06:31.819Z",
+    "createdAt": "2026-02-06T04:06:23.741Z",
+    "wxTransactionId": null
+  }
+]

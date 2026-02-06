@@ -1,0 +1,153 @@
+.page-subscribe {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+  padding: 48rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 48rpx;
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12rpx;
+}
+
+.desc {
+  font-size: 28rpx;
+  color: #64748b;
+}
+
+.plans {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 48rpx;
+}
+
+.plan-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  border: 4rpx solid #e2e8f0;
+  text-align: center;
+}
+
+.plan-card.selected {
+  border-color: #4f46e5;
+  background: #f5f3ff;
+}
+
+.plan-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 16rpx;
+}
+
+.plan-price {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 8rpx;
+}
+
+.plan-desc {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.tip {
+  background: #f0fdf4;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+  border: 2rpx solid #bbf7d0;
+}
+
+.tip-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 8rpx;
+}
+
+.tip-order {
+  display: block;
+  font-size: 26rpx;
+  color: #15803d;
+  margin-bottom: 8rpx;
+}
+
+.tip-msg {
+  display: block;
+  font-size: 24rpx;
+  color: #166534;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.btn-create {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 16rpx;
+}
+
+.btn-create[disabled] {
+  opacity: 0.6;
+}
+
+.btn-mark {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #4f46e5;
+  background: #eef2ff;
+  border: 2rpx solid #c7d2fe;
+  border-radius: 16rpx;
+}
+
+.btn-mark[disabled] {
+  opacity: 0.5;
+  color: #94a3b8;
+}
+
+.pending-section {
+  margin-top: 32rpx;
+  padding: 24rpx;
+  background: #f8fafc;
+  border-radius: 12rpx;
+}
+
+.pending-label {
+  display: block;
+  font-size: 24rpx;
+  color: #64748b;
+  margin-bottom: 8rpx;
+}
+
+.pending-id {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-all;
+}

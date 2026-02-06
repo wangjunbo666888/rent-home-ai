@@ -1,0 +1,55 @@
+<view class="page-subscribe">
+  <view class="header">
+    <text class="title">订阅服务</text>
+    <text class="desc">开通后可使用智能匹配与地址联想</text>
+  </view>
+
+  <view class="plans">
+    <view
+      class="plan-card {{selectedPlan === 'month' ? 'selected' : ''}}"
+      data-plan="month"
+      bindtap="onSelectPlan"
+    >
+      <text class="plan-name">月度订阅</text>
+      <text class="plan-price">¥29</text>
+      <text class="plan-desc">30 天</text>
+    </view>
+    <view
+      class="plan-card {{selectedPlan === 'quarter' ? 'selected' : ''}}"
+      data-plan="quarter"
+      bindtap="onSelectPlan"
+    >
+      <text class="plan-name">季度订阅</text>
+      <text class="plan-price">¥79</text>
+      <text class="plan-desc">90 天，更划算</text>
+    </view>
+  </view>
+
+  <view class="tip" wx:if="{{createResult}}">
+    <text class="tip-title">订单已创建</text>
+    <text class="tip-order">订单号：{{createResult.id}}</text>
+    <text class="tip-msg">当前为手动标记支付。请点击下方「标记为已支付」完成开通（仅限自己的待支付订单）。</text>
+  </view>
+
+  <view class="actions">
+    <button
+      class="btn-create"
+      disabled="{{loading || !selectedPlan}}"
+      bindtap="onCreateOrder"
+    >
+      {{loading ? '创建中...' : '创建订单'}}
+    </button>
+    <button
+      class="btn-mark"
+      disabled="{{marking || !pendingOrderId}}"
+      bindtap="onMarkPaid"
+    >
+      {{marking ? '处理中...' : '标记为已支付'}}
+    </button>
+  </view>
+
+  <view class="pending-section" wx:if="{{pendingOrderId}}">
+    <text class="pending-label">待支付订单号（用于标记）：</text>
+    <text class="pending-id">{{pendingOrderId}}</text>
+  </view>
+</view>

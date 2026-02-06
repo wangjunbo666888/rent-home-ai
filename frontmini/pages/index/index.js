@@ -1,8 +1,9 @@
 /**
  * 首页：输入租房需求（上班地址、通勤时长、预算）
- * 提交后调用匹配接口并跳转结果页
+ * 提交后调用匹配接口并跳转结果页；未登录/未订阅时展示引导
  */
 const api = require('../../utils/api.js');
+const { getToken } = require('../../utils/request.js');
 
 Page({
   data: {
@@ -13,11 +14,29 @@ Page({
     suggestionOpen: false,
     suggestionLoading: false,
     loading: false,
-    error: null
+    error: null,
+    needLogin: false,
+    needSubscribe: false
   },
 
   /** 防抖定时器 */
   _debounceTimer: null,
+
+  onShow() {
+    const token = getToken();
+    if (!token) {
+      wx.reLaunch({ url: '/pages/login/login' });
+      return;
+    }
+    this.setData({ needLogin: false });
+    api.getProfile().then(res => {
+      const data = res && res.data ? res.data : null;
+      const hasActive = !!(data && data.hasActiveSubscription);
+      this.setData({ needSubscribe: !hasActive });
+    }).catch(() => {
+      this.setData({ needSubscribe: true });
+    });
+  },
 
   /** 上班地址输入 */
   onWorkAddressInput(e) {
@@ -125,6 +144,13 @@ Page({
     const clampedCommute = Math.max(COMMUTE_MIN, Math.min(COMMUTE_MAX, ct));
     const clampedBudget = Math.max(BUDGET_MIN, Math.min(BUDGET_MAX, bd));
     return { commuteTime: clampedCommute, budget: clampedBudget };
+  },
+
+  goLogin() {
+    wx.navigateTo({ url: '/pages/login/login' });
+  },
+  goSubscribe() {
+    wx.navigateTo({ url: '/pages/subscribe/subscribe' });
   },
 
   /** 开始匹配 */

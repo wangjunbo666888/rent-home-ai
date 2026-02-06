@@ -1,6 +1,15 @@
 <!-- 首页：顶部横幅 + 浅灰背景 + 白卡片 -->
 <view class="page-index">
   <scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <!-- 未登录/未订阅引导 -->
+    <view class="guide-bar need-login" wx:if="{{needLogin}}" bindtap="goLogin">
+      <text>使用匹配功能需先登录</text>
+      <text class="guide-link">去登录</text>
+    </view>
+    <view class="guide-bar need-subscribe" wx:elif="{{needSubscribe}}" bindtap="goSubscribe">
+      <text>使用匹配功能需开通订阅</text>
+      <text class="guide-link">去开通</text>
+    </view>
     <!-- 顶部横幅区域 -->
     <view class="top-banner">
       <text class="banner-title">速配魔方</text>
