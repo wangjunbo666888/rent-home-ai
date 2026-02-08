@@ -264,9 +264,14 @@ Page({
     }
   },
 
-  /** 选择并上传图片 */
+  /** 选择并上传图片（上传前需已填写公寓名称，文件按公寓名分目录存储） */
   onChooseImage() {
     if (this.data.uploadingImage) return;
+    const name = (this.data.form && this.data.form.name || '').trim();
+    if (!name) {
+      wx.showToast({ title: '请先填写公寓名称', icon: 'none' });
+      return;
+    }
     wx.chooseImage({
       count: 9 - (this.data.form.images || []).length,
       sizeType: ['compressed'],
@@ -292,9 +297,13 @@ Page({
     this.setData({ uploadingImage: true, error: null });
     const form = { ...this.data.form };
     const images = form.images || [];
+    const uploadOpts = {
+      apartmentName: (form.name || '').trim(),
+      district: (form.district || '').trim()
+    };
     for (const path of paths) {
       try {
-        const result = await api.uploadImage(path);
+        const result = await api.uploadImage(path, uploadOpts);
         if (result && result.url) {
           const title = `图片${images.length + 1}`;
           images.push({ url: result.url, title });
@@ -309,9 +318,14 @@ Page({
     this.setData({ form, uploadingImage: false });
   },
 
-  /** 选择并上传视频（不传 maxDuration，选完后在 success 里校验时长与大小，避免真机兼容问题） */
+  /** 选择并上传视频（上传前需已填写公寓名称，文件按公寓名分目录存储） */
   onChooseVideo() {
     if (this.data.uploadingVideo) return;
+    const name = (this.data.form && this.data.form.name || '').trim();
+    if (!name) {
+      wx.showToast({ title: '请先填写公寓名称', icon: 'none' });
+      return;
+    }
     const MAX_VIDEO_SECONDS = 300; // 5 分钟
     const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB，与后端 multer 限制一致
     wx.chooseMedia({
@@ -360,8 +374,13 @@ Page({
 
   async uploadVideoOne(path) {
     this.setData({ uploadingVideo: true, error: null });
+    const form = this.data.form || {};
+    const uploadOpts = {
+      apartmentName: (form.name || '').trim(),
+      district: (form.district || '').trim()
+    };
     try {
-      const result = await api.uploadVideo(path);
+      const result = await api.uploadVideo(path, uploadOpts);
       if (result && result.url) {
         const form = { ...this.data.form };
         const videos = form.videos || [];

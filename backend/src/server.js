@@ -215,14 +215,40 @@ app.post('/api/admin/apartments/check-name', requireAdminAuth, (req, res) => {
   res.json({ success: true, duplicate });
 });
 
-/** 管理端 - 上传文件到腾讯云 COS（图片或视频） */
+/**
+ * 将公寓名称、区域转为 COS 安全文件夹名（去除特殊字符）
+ * @param {string} name - 公寓名称
+ * @param {string} [district] - 区域
+ * @returns {string}
+ */
+function sanitizeFolderName(name, district) {
+  const raw = [district, name].filter(Boolean).join('_');
+  return raw
+    .replace(/[/\\:*?"<>|]/g, '_')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '')
+    || 'apartments';
+}
+
+/** 管理端 - 上传文件到腾讯云 COS（图片或视频），按公寓名分目录存储 */
 app.post('/api/admin/upload', requireAdminAuth, upload.single('file'), async (req, res) => {
   try {
     if (!req.file || !req.file.buffer) {
       return res.status(400).json({ success: false, message: '请选择文件' });
     }
-    const type = (req.body && req.body.type) || 'image'; // image | video
-    const prefix = type === 'video' ? 'apartments/videos/' : 'apartments/images/';
+    const body = req.body || {};
+    const type = body.type || 'image'; // image | video
+    const apartmentName = (body.apartmentName || '').trim();
+    const district = (body.district || '').trim();
+
+    let prefix;
+    if (apartmentName) {
+      const folder = sanitizeFolderName(apartmentName, district);
+      prefix = type === 'video' ? `apartments/${folder}/videos/` : `apartments/${folder}/images/`;
+    } else {
+      prefix = type === 'video' ? 'apartments/videos/' : 'apartments/images/';
+    }
     const { url } = await uploadToCos(req.file.buffer, req.file.originalname, prefix);
     res.json({ success: true, url });
   } catch (error) {

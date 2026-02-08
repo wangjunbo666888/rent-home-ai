@@ -451,5 +451,34 @@
     ],
     "layoutType": "复式",
     "price": 3900
+  },
+  {
+    "id": "APT0029",
+    "name": "泊寓测试",
+    "minPrice": 3000,
+    "maxPrice": 4000,
+    "address": "北京市丰台区看丹路丰台二中(看丹校区)西南侧约270米",
+    "district": "丰台区",
+    "remarks": "宠物友好",
+    "pet": "禁养",
+    "images": [
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/丰台区_泊寓测试/images/1770517497728-6pnd5m61fda.jpg",
+        "title": "图片1"
+      },
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/丰台区_泊寓测试/images/1770517503412-yhp24zwc3ak.jpg",
+        "title": "图片2"
+      }
+    ],
+    "videos": [
+      {
+        "url": "https://house-1353336237.cos.ap-beijing.myqcloud.com/apartments/丰台区_泊寓测试/videos/1770517480007-3m5xb5pebor.mp4",
+        "title": "视频2",
+        "description": "",
+        "layoutType": "开间",
+        "price": 2900
+      }
+    ]
   }
 ]

@@ -82,21 +82,29 @@ function suggestion(keyword) {
 }
 
 /**
- * 上传图片到 COS
+ * 上传图片到 COS（按公寓名分目录存储，需传入 apartmentName）
  * @param {string} filePath - 本地临时路径
+ * @param {Object} [options] - { apartmentName, district }
  * @returns {Promise<{ success: boolean, url: string }>}
  */
-function uploadImage(filePath) {
-  return uploadFile(filePath, 'image');
+function uploadImage(filePath, options = {}) {
+  const extra = {};
+  if (options.apartmentName) extra.apartmentName = options.apartmentName;
+  if (options.district) extra.district = options.district;
+  return uploadFile(filePath, 'image', extra);
 }
 
 /**
- * 上传视频到 COS
+ * 上传视频到 COS（按公寓名分目录存储，需传入 apartmentName）
  * @param {string} filePath - 本地临时路径
+ * @param {Object} [options] - { apartmentName, district }
  * @returns {Promise<{ success: boolean, url: string }>}
  */
-function uploadVideo(filePath) {
-  return uploadFile(filePath, 'video');
+function uploadVideo(filePath, options = {}) {
+  const extra = {};
+  if (options.apartmentName) extra.apartmentName = options.apartmentName;
+  if (options.district) extra.district = options.district;
+  return uploadFile(filePath, 'video', extra);
 }
 
 module.exports = {

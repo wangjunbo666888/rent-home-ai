@@ -194,10 +194,15 @@ function ApartmentForm() {
     }
   };
 
-  /** 上传图片到 COS，返回 url 后加入 images */
+  /** 上传图片到 COS，返回 url 后加入 images（上传前需已填写公寓名称，文件按公寓名分目录存储） */
   const handleImageUpload = async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    const name = (form.name || '').trim();
+    if (!name) {
+      setError('请先填写公寓名称');
+      return;
+    }
     if (!file.type.startsWith('image/')) {
       setError('请选择图片文件');
       return;
@@ -207,6 +212,8 @@ function ApartmentForm() {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('type', 'image');
+    fd.append('apartmentName', name);
+    fd.append('district', (form.district || '').trim());
     try {
       const res = await authFetch('/api/admin/upload', { method: 'POST', body: fd });
       const json = await res.json();
@@ -219,15 +226,22 @@ function ApartmentForm() {
     }
   };
 
-  /** 上传视频到 COS */
+  /** 上传视频到 COS（上传前需已填写公寓名称，文件按公寓名分目录存储） */
   const handleVideoUpload = async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    const name = (form.name || '').trim();
+    if (!name) {
+      setError('请先填写公寓名称');
+      return;
+    }
     e.target.value = '';
     setError(null);
     const fd = new FormData();
     fd.append('file', file);
     fd.append('type', 'video');
+    fd.append('apartmentName', name);
+    fd.append('district', (form.district || '').trim());
     try {
       const res = await authFetch('/api/admin/upload', { method: 'POST', body: fd });
       const json = await res.json();

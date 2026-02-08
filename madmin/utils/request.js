@@ -116,18 +116,20 @@ function del(url) {
  * 上传文件（用于公寓图片/视频上传，对应 backend /api/admin/upload）
  * @param {string} filePath - 本地文件路径（wx.chooseImage/chooseMedia 返回）
  * @param {string} type - 'image' | 'video'
+ * @param {Object} [extra] - 额外表单字段，如 { apartmentName, district } 用于按公寓名分目录存储
  * @returns {Promise<{ success: boolean, url?: string, message?: string }>}
  */
-function uploadFile(filePath, type = 'image') {
+function uploadFile(filePath, type = 'image', extra = {}) {
   return new Promise((resolve, reject) => {
     const url = config.baseUrl + '/api/admin/upload';
     const token = wx.getStorageSync(TOKEN_KEY);
     const header = token ? { 'Authorization': 'Bearer ' + token } : {};
+    const formData = { type, ...extra };
     wx.uploadFile({
       url,
       filePath,
       name: 'file',
-      formData: { type },
+      formData,
       header,
       success(res) {
         if (res.statusCode === 401) {
