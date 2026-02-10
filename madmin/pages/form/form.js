@@ -5,7 +5,7 @@
 const api = require('../../utils/api.js');
 
 /** 宠物选项（key 与 value 均为文字） */
-const PET_OPTIONS = ['禁养', '可养猫，不可养狗', '可养猫，可养小狗', '不限制'];
+const PET_OPTIONS = ['禁养', '可养猫，不可养狗', '可养猫，可养小狗', '不限制', '未知'];
 /** 户型选项（默认项：开间） */
 const LAYOUT_TYPE_OPTIONS = ['开间', '复式', '隔断套间', '小院开间', '一室一厅', '两室一厅', '三室一厅', '其他'];
 

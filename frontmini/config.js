@@ -4,8 +4,9 @@
  */
 module.exports = {
   /** 后端 API 根地址，真机/体验版请改为你的服务器域名 */
-  baseUrl: 'https://api.supeimofang.cn',
-  //baseUrl: 'http://localhost:3001',
+  //baseUrl: 'https://api.supeimofang.cn',
+  //baseUrl: 'http://49.232.139.106:3001',
+  baseUrl: 'http://localhost:3001',
   /** 联想接口区域 */
   suggestionRegion: '北京市'
 };
