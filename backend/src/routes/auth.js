@@ -1,11 +1,11 @@
 /**
  * 登录与用户相关接口
- * POST /api/auth/send-code 发送验证码（当前为假发送）
+ * POST /api/auth/send-code 发送验证码（由 SMS_USE_REAL 控制假发送/腾讯云真实发送）
  * POST /api/auth/login    验证码登录
  * GET  /api/auth/profile  当前用户信息（含订阅到期日）
  */
 import express from 'express';
-import { sendCode, verifyCode } from '../utils/smsFake.js';
+import { sendCode, verifyCode } from '../utils/sms.js';
 import { loadUsers, saveUsers } from '../utils/userDataLoader.js';
 import { loadSubscriptions } from '../utils/userDataLoader.js';
 import { requireAuth, signToken } from '../middleware/auth.js';
@@ -29,7 +29,7 @@ function nextUserId(list) {
 }
 
 /** 发送验证码 */
-router.post('/send-code', (req, res) => {
+router.post('/send-code', async (req, res) => {
   const phone = (req.body && req.body.phone) ? String(req.body.phone).trim() : '';
   if (!PHONE_REG.test(phone)) {
     return res.status(400).json({
@@ -37,7 +37,7 @@ router.post('/send-code', (req, res) => {
       message: '请输入正确的手机号'
     });
   }
-  const result = sendCode(phone);
+  const result = await sendCode(phone);
   if (!result.success) {
     return res.status(400).json({
       success: false,
