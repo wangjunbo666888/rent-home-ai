@@ -20,5 +20,38 @@
     "expireAt": "2026-05-07T04:06:31.819Z",
     "createdAt": "2026-02-06T04:06:23.741Z",
     "wxTransactionId": null
+  },
+  {
+    "id": "SUB000003",
+    "userId": "U0003",
+    "plan": "month",
+    "amount": 2900,
+    "payStatus": "paid",
+    "paidAt": "2026-02-13T08:08:18.444Z",
+    "expireAt": "2026-03-15T08:08:18.444Z",
+    "createdAt": "2026-02-13T08:08:13.968Z",
+    "wxTransactionId": null
+  },
+  {
+    "id": "SUB000004",
+    "userId": "U0003",
+    "plan": "month",
+    "amount": 2900,
+    "payStatus": "paid",
+    "paidAt": "2026-02-13T08:08:28.113Z",
+    "expireAt": "2026-04-14T08:08:18.444Z",
+    "createdAt": "2026-02-13T08:08:25.448Z",
+    "wxTransactionId": null
+  },
+  {
+    "id": "SUB000005",
+    "userId": "U0003",
+    "plan": "quarter",
+    "amount": 7900,
+    "payStatus": "paid",
+    "paidAt": "2026-02-13T08:08:41.561Z",
+    "expireAt": "2026-07-13T08:08:18.444Z",
+    "createdAt": "2026-02-13T08:08:40.204Z",
+    "wxTransactionId": null
   }
 ]

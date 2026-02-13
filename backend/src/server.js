@@ -23,9 +23,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// 中间件
+// 中间件（保留 rawBody 供微信支付回调验签）
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    if (buf && buf.length) req.rawBody = buf.toString('utf8');
+  }
+}));
 
 /** 登录与用户信息（无需订阅） */
 app.use('/api/auth', authRouter);

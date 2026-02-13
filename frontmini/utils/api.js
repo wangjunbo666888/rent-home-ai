@@ -57,12 +57,15 @@ function getProfile() {
 /** ---------- 订阅 ---------- */
 
 /**
- * 创建订阅订单（月/季）
+ * 创建订阅订单（月/季），可选传 code 以获取微信支付参数
  * @param {string} plan - 'month' | 'quarter'
+ * @param {string} [code] - wx.login() 返回的 code，用于 JSAPI 支付
  * @returns {Promise<{ success: boolean, data: Object }>}
  */
-function createOrder(plan) {
-  return post('/api/subscription/create', { plan });
+function createOrder(plan, code) {
+  const body = { plan };
+  if (code) body.code = code;
+  return post('/api/subscription/create', body);
 }
 
 /**
