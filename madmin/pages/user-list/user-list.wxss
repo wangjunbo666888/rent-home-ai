@@ -66,19 +66,10 @@
   border-right: 1rpx solid #eee;
 }
 
-.page-list .table-fixed-head,
-.page-list .table-fixed-row {
-  display: flex;
-  align-items: center;
-  border-bottom: 1rpx solid #eee;
-  min-height: 72rpx;
+.page-list .table-fixed .table-head,
+.page-list .table-fixed .table-row {
+  padding: 0 16rpx 0 16rpx;
   box-sizing: border-box;
-}
-
-.page-list .table-fixed-head {
-  background: #f8f8f8;
-  font-weight: bold;
-  color: #333;
 }
 
 .page-list .table-scroll {
@@ -88,43 +79,52 @@
 }
 
 .page-list .user-table {
-  min-width: 800rpx;
+  min-width: 840rpx;
   display: inline-block;
 }
 
-.page-list .table-scroll-head,
-.page-list .table-scroll-row {
+.page-list .table-head,
+.page-list .table-row {
   display: flex;
   align-items: center;
   border-bottom: 1rpx solid #eee;
   min-height: 72rpx;
-  padding: 0 16rpx;
   box-sizing: border-box;
 }
 
-.page-list .table-scroll-head {
+.page-list .table-head {
   background: #f8f8f8;
   font-weight: bold;
+  font-size: 26rpx;
   color: #333;
 }
 
-.page-list .table-scroll-row {
+.page-list .table-row {
   font-size: 26rpx;
   color: #666;
 }
 
-.page-list .user-table .col {
+.page-list .table-scroll .table-head,
+.page-list .table-scroll .table-row {
+  padding: 0 16rpx 0 0;
+  box-sizing: border-box;
+}
+
+.page-list .user-table .col,
+.page-list .table-fixed .col {
   padding: 20rpx 16rpx;
   font-size: 26rpx;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
-.page-list .user-table .col-phone {
-  width: 220rpx;
+.page-list .table-fixed .col-phone {
+  width: 188rpx;
+  min-width: 188rpx;
 }
 
 .page-list .user-table .col-date {
-  width: 260rpx;
+  width: 280rpx;
   color: #666;
 }
 

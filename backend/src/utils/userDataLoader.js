@@ -21,7 +21,8 @@ export async function loadUsers() {
     if (!fs.existsSync(USERS_FILE)) {
       return [];
     }
-    const data = fs.readFileSync(USERS_FILE, 'utf-8');
+    const data = fs.readFileSync(USERS_FILE, 'utf-8').trim();
+    if (!data) return [];
     const list = JSON.parse(data);
     return Array.isArray(list) ? list : [];
   } catch (error) {
@@ -56,7 +57,8 @@ export async function loadSubscriptions() {
     if (!fs.existsSync(SUBSCRIPTIONS_FILE)) {
       return [];
     }
-    const data = fs.readFileSync(SUBSCRIPTIONS_FILE, 'utf-8');
+    const data = fs.readFileSync(SUBSCRIPTIONS_FILE, 'utf-8').trim();
+    if (!data) return [];
     const list = JSON.parse(data);
     return Array.isArray(list) ? list : [];
   } catch (error) {

@@ -3,7 +3,7 @@
  * @module middleware/auth
  */
 import jwt from 'jsonwebtoken';
-import { loadUsers, loadSubscriptions } from '../utils/userDataLoader.js';
+import { loadOrders } from '../utils/orderDataLoader.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'rent-home-dev-secret-change-in-production';
 
@@ -44,8 +44,7 @@ export function requireAuth(req, res, next) {
 }
 
 /**
- * 校验登录且订阅未过期。依赖 requireAuth 已挂载 req.user
- * 需在 requireAuth 之后使用；会查询 data/subscriptions 得到用户最新到期时间
+ * 校验登录且订阅未过期。依赖 requireAuth 已挂载 req.user；从 data/orders 总订单取用户过期时间
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
@@ -59,12 +58,10 @@ export async function requireSubscription(req, res, next) {
     });
   }
   try {
-    const subscriptions = await loadSubscriptions();
+    const orders = await loadOrders();
+    const master = orders.find(o => o.userId === req.user.id);
     const now = new Date().toISOString();
-    const valid = subscriptions
-      .filter(s => s.userId === req.user.id && s.payStatus === 'paid' && s.expireAt > now)
-      .sort((a, b) => (b.expireAt > a.expireAt ? 1 : -1));
-    const expireAt = valid.length > 0 ? valid[0].expireAt : null;
+    const expireAt = master && master.expireAt && master.expireAt > now ? master.expireAt : null;
     if (!expireAt) {
       return res.status(403).json({
         success: false,

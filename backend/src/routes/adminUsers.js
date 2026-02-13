@@ -7,6 +7,7 @@
  */
 import express from 'express';
 import { loadUsers, loadSubscriptions, saveSubscriptions } from '../utils/userDataLoader.js';
+import { loadOrders, saveOrders, nextOrderId, nextOrderNo } from '../utils/orderDataLoader.js';
 
 const router = express.Router();
 
@@ -16,10 +17,11 @@ const PLANS = {
 };
 
 /**
+ * 子订单 id 生成（SUB000001）
  * @param {Array} list
  * @returns {string}
  */
-function nextOrderId(list) {
+function nextSubId(list) {
   let max = 0;
   for (const item of list) {
     const m = /^SUB(\d+)$/i.exec(item.id);
@@ -29,44 +31,36 @@ function nextOrderId(list) {
 }
 
 /**
- * 计算续费后的到期时间
- * @param {Array} list
- * @param {string} userId
- * @param {string} currentOrderId
- * @param {Date|string} paidAt
- * @param {number} planDays
- * @returns {string}
+ * 子订单 startAt、expireAt：startAt = max(总订单.expireAt, paidAt)，expireAt = startAt + planDays
  */
-function computeNewExpireAt(list, userId, currentOrderId, paidAt, planDays) {
-  const now = paidAt instanceof Date ? paidAt : new Date(paidAt);
-  let baseTime = now.getTime();
-  const otherPaid = list.filter(
-    s => s.userId === userId && s.payStatus === 'paid' && s.id !== currentOrderId && s.expireAt
-  );
-  for (const o of otherPaid) {
-    const t = new Date(o.expireAt).getTime();
-    if (t > baseTime) baseTime = t;
+function computeSubPeriod(masterOrder, paidAt, planDays) {
+  const paidTime = paidAt instanceof Date ? paidAt.getTime() : new Date(paidAt).getTime();
+  let baseTime = paidTime;
+  if (masterOrder && masterOrder.expireAt) {
+    const prevEnd = new Date(masterOrder.expireAt).getTime();
+    if (prevEnd > baseTime) baseTime = prevEnd;
   }
-  return new Date(baseTime + planDays * 24 * 60 * 60 * 1000).toISOString();
+  const startAt = new Date(baseTime).toISOString();
+  const expireAt = new Date(baseTime + planDays * 24 * 60 * 60 * 1000).toISOString();
+  return { startAt, expireAt };
 }
 
-/** 用户列表：手机号筛选、分页，每条带 expireAt、subscriptionCount */
+/** 用户列表：手机号筛选、分页，expireAt 来自总订单，subscriptionCount 为子订单数 */
 router.get('/', async (req, res) => {
   try {
-    const [users, subscriptions] = await Promise.all([loadUsers(), loadSubscriptions()]);
+    const [users, orders, subscriptions] = await Promise.all([loadUsers(), loadOrders(), loadSubscriptions()]);
     const phone = (req.query.phone || '').trim().toLowerCase();
     let list = users.map(u => {
-      const userSubs = subscriptions.filter(s => s.userId === u.id && s.payStatus === 'paid' && s.expireAt);
-      const expireAt = userSubs.length
-        ? userSubs.reduce((max, s) => (new Date(s.expireAt) > new Date(max) ? s.expireAt : max), userSubs[0].expireAt)
-        : null;
+      const master = orders.find(o => o.userId === u.id);
+      const expireAt = master && master.expireAt ? master.expireAt : null;
+      const subscriptionCount = subscriptions.filter(s => s.userId === u.id).length;
       return {
         id: u.id,
         phone: u.phone,
         createdAt: u.createdAt,
         updatedAt: u.updatedAt,
         expireAt,
-        subscriptionCount: subscriptions.filter(s => s.userId === u.id).length
+        subscriptionCount
       };
     });
     if (phone) {
@@ -109,7 +103,7 @@ router.get('/:userId/subscriptions', async (req, res) => {
   }
 });
 
-/** 管理员为该用户续费（无需真实支付：支付人=管理员，金额=0，支付时间=当前系统时间） */
+/** 管理员为该用户续费：总订单不存在则创建，子订单 startAt = max(总订单.expireAt, 当前时间)，金额 0、支付人=管理员 */
 router.post('/:userId/renew', async (req, res) => {
   try {
     const users = await loadUsers();
@@ -124,27 +118,43 @@ router.post('/:userId/renew', async (req, res) => {
     const config = PLANS[plan];
     const paidAt = new Date();
 
-    const list = await loadSubscriptions();
-    const id = nextOrderId(list);
-    const expireAt = computeNewExpireAt(list, user.id, id, paidAt, config.days);
-    const order = {
-      id,
+    const [orders, list] = await Promise.all([loadOrders(), loadSubscriptions()]);
+    let master = orders.find(o => o.userId === user.id);
+    if (!master) {
+      const masterId = nextOrderId(orders);
+      const orderNo = nextOrderNo(orders);
+      const iso = paidAt.toISOString();
+      master = { id: masterId, orderNo, userId: user.id, expireAt: null, createdAt: iso, updatedAt: iso };
+      orders.push(master);
+      await saveOrders(orders);
+    }
+    const { startAt, expireAt } = computeSubPeriod(master, paidAt, config.days);
+    const subId = nextSubId(list);
+    const iso = paidAt.toISOString();
+    const sub = {
+      id: subId,
+      orderId: master.id,
       userId: user.id,
+      startAt,
+      expireAt,
       plan,
       amount: 0,
       payStatus: 'paid',
-      paidAt: paidAt.toISOString(),
-      expireAt,
-      createdAt: new Date().toISOString(),
-      wxTransactionId: null,
-      payer: '管理员'
+      paidAt: iso,
+      payer: '管理员',
+      createdAt: iso,
+      wxTransactionId: null
     };
-    list.push(order);
-    await saveSubscriptions(list);
+    list.push(sub);
+    const oIdx = orders.findIndex(o => o.userId === user.id);
+    if (oIdx >= 0) {
+      orders[oIdx] = { ...orders[oIdx], expireAt, updatedAt: iso };
+    }
+    await Promise.all([saveOrders(orders), saveSubscriptions(list)]);
 
     res.status(201).json({
       success: true,
-      data: order,
+      data: sub,
       message: '续费成功'
     });
   } catch (e) {

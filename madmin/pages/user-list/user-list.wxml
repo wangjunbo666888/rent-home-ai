@@ -18,30 +18,26 @@
     <view class="table-wrap" wx:if="{{list && list.length > 0}}">
       <view class="table-container">
         <view class="table-fixed">
-          <view class="table-head table-fixed-head">
+          <view class="table-head">
             <text class="col col-phone">手机号</text>
           </view>
-          <view class="table-fixed-body">
-            <view class="table-row table-fixed-row" wx:for="{{list}}" wx:key="id">
-              <text class="col col-phone">{{item.phone}}</text>
-            </view>
+          <view class="table-row" wx:for="{{list}}" wx:key="id">
+            <text class="col col-phone">{{item.phone}}</text>
           </view>
         </view>
         <scroll-view scroll-x class="table-scroll" show-scrollbar="{{true}}">
           <view class="user-table">
-            <view class="table-head table-scroll-head">
+            <view class="table-head">
               <text class="col col-date">注册时间</text>
               <text class="col col-date">到期时间</text>
               <text class="col col-actions">操作</text>
             </view>
-            <view class="table-scroll-body">
-              <view class="table-row table-scroll-row" wx:for="{{list}}" wx:key="id">
-                <text class="col col-date">{{item.createdAtText}}</text>
-                <text class="col col-date">{{item.expireAtText}}</text>
-                <view class="col col-actions">
-                  <text class="link-btn" data-id="{{item.id}}" bindtap="onPurchaseRecord">购买记录({{item.subscriptionCount || 0}})</text>
-                  <text class="link-btn" data-id="{{item.id}}" data-phone="{{item.phone}}" bindtap="onRenew">续费</text>
-                </view>
+            <view class="table-row" wx:for="{{list}}" wx:key="id">
+              <text class="col col-date">{{item.createdAtText}}</text>
+              <text class="col col-date">{{item.expireAtText}}</text>
+              <view class="col col-actions">
+                <text class="link-btn" data-id="{{item.id}}" bindtap="onPurchaseRecord">购买记录({{item.subscriptionCount || 0}})</text>
+                <text class="link-btn" data-id="{{item.id}}" data-phone="{{item.phone}}" bindtap="onRenew">续费</text>
               </view>
             </view>
           </view>

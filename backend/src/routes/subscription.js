@@ -8,6 +8,7 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { loadSubscriptions, saveSubscriptions } from '../utils/userDataLoader.js';
+import { loadOrders, saveOrders, nextOrderId as nextMasterOrderId, nextOrderNo } from '../utils/orderDataLoader.js';
 import {
   loadConfig,
   isEnabled,
@@ -35,7 +36,8 @@ const PLANS = {
   quarter: { name: '季度订阅', amount: 7900, days: 90 }  // 79 元，90 天
 };
 
-function nextOrderId(list) {
+/** 子订单 id（SUB000001） */
+function nextSubId(list) {
   let max = 0;
   for (const item of list) {
     const m = /^SUB(\d+)$/i.exec(item.id);
@@ -45,26 +47,37 @@ function nextOrderId(list) {
 }
 
 /**
- * 计算续费后的到期时间
- * 若用户已有未过期或尚未结束的订阅，从最晚到期日累加；否则从支付时间起算
- * @param {Array} list - 所有订阅订单
- * @param {string} userId - 用户 ID
- * @param {string} currentOrderId - 当前处理的订单 ID（排除）
+ * 计算子订单 startAt、expireAt：startAt = max(上一段结束时间, 本次支付时间)，expireAt = startAt + planDays
+ * @param {Object} masterOrder - 总订单（含 expireAt）
  * @param {Date} paidAt - 支付时间
  * @param {number} planDays - 套餐天数
- * @returns {string} ISO 格式的 expireAt
+ * @returns {{ startAt: string, expireAt: string }} ISO 字符串
  */
-function computeNewExpireAt(list, userId, currentOrderId, paidAt, planDays) {
-  const now = paidAt instanceof Date ? paidAt : new Date(paidAt);
-  let baseTime = now.getTime();
-  const otherPaid = list.filter(
-    s => s.userId === userId && s.payStatus === 'paid' && s.id !== currentOrderId && s.expireAt
-  );
-  for (const o of otherPaid) {
-    const t = new Date(o.expireAt).getTime();
-    if (t > baseTime) baseTime = t;
+function computeSubPeriod(masterOrder, paidAt, planDays) {
+  const paidTime = paidAt instanceof Date ? paidAt.getTime() : new Date(paidAt).getTime();
+  let baseTime = paidTime;
+  if (masterOrder && masterOrder.expireAt) {
+    const prevEnd = new Date(masterOrder.expireAt).getTime();
+    if (prevEnd > baseTime) baseTime = prevEnd;
   }
-  return new Date(baseTime + planDays * 24 * 60 * 60 * 1000).toISOString();
+  const startAt = new Date(baseTime).toISOString();
+  const expireAt = new Date(baseTime + planDays * 24 * 60 * 60 * 1000).toISOString();
+  return { startAt, expireAt };
+}
+
+/** 确保用户存在总订单，不存在则创建并保存 */
+async function ensureMasterOrder(userId) {
+  const orders = await loadOrders();
+  let master = orders.find(o => o.userId === userId);
+  if (!master) {
+    const id = nextMasterOrderId(orders);
+    const orderNo = nextOrderNo(orders);
+    const now = new Date().toISOString();
+    master = { id, orderNo, userId, expireAt: null, createdAt: now, updatedAt: now };
+    orders.push(master);
+    await saveOrders(orders);
+  }
+  return master;
 }
 
 /** 创建订阅订单（可选传 code，启用微信支付时返回 paymentParams 供小程序调起支付） */
@@ -93,24 +106,25 @@ router.post('/create', requireAuth, async (req, res) => {
     }
 
     let list = await loadSubscriptions();
-    const id = nextOrderId(list);
+    const id = nextSubId(list);
     const now = new Date().toISOString();
-    const order = {
+    const sub = {
       id,
       userId: req.user.id,
       plan,
       amount: config.amount,
       payStatus: 'pending',
       paidAt: null,
+      startAt: null,
       expireAt: null,
       createdAt: now,
       wxTransactionId: null
     };
-    list.push(order);
+    list.push(sub);
     await saveSubscriptions(list);
 
     const data = {
-      id: order.id,
+      id: sub.id,
       plan,
       planName: config.name,
       amount: config.amount,
@@ -157,31 +171,45 @@ router.post('/pay-notify', async (req, res) => {
   }
   const { out_trade_no, transaction_id } = event;
   try {
-    let list = await loadSubscriptions();
+    const [orders, list] = await Promise.all([loadOrders(), loadSubscriptions()]);
     const idx = list.findIndex(s => s.id === out_trade_no);
     if (idx === -1) {
       return res.status(200).json({ code: 'SUCCESS', message: '成功' });
     }
-    const order = list[idx];
-    if (order.payStatus === 'paid') {
+    const sub = list[idx];
+    if (sub.payStatus === 'paid') {
       return res.status(200).json({ code: 'SUCCESS', message: '成功' });
     }
-    const planConfig = PLANS[order.plan];
+    const planConfig = PLANS[sub.plan];
     if (!planConfig) {
       return res.status(200).json({ code: 'SUCCESS', message: '成功' });
     }
     const now = new Date();
     const paidAt = now.toISOString();
-    const expireAt = computeNewExpireAt(list, order.userId, order.id, now, planConfig.days);
+    let master = orders.find(o => o.userId === sub.userId);
+    if (!master) {
+      const masterId = nextMasterOrderId(orders);
+      const orderNo = nextOrderNo(orders);
+      const iso = now.toISOString();
+      master = { id: masterId, orderNo, userId: sub.userId, expireAt: null, createdAt: iso, updatedAt: iso };
+      orders.push(master);
+    }
+    const { startAt, expireAt } = computeSubPeriod(master, now, planConfig.days);
     list[idx] = {
-      ...order,
+      ...sub,
+      orderId: master.id,
       payStatus: 'paid',
       paidAt,
+      startAt,
       expireAt,
       wxTransactionId: transaction_id,
       payer: '客户'
     };
-    await saveSubscriptions(list);
+    const oIdx = orders.findIndex(o => o.userId === sub.userId);
+    if (oIdx >= 0) {
+      orders[oIdx] = { ...orders[oIdx], expireAt, updatedAt: paidAt };
+    }
+    await Promise.all([saveOrders(orders), saveSubscriptions(list)]);
     res.status(200).json({ code: 'SUCCESS', message: '成功' });
   } catch (e) {
     console.error('支付回调更新订单失败:', e);
@@ -189,39 +217,39 @@ router.post('/pay-notify', async (req, res) => {
   }
 });
 
-/** 手动标记订单已支付（开发/运营用，无权限校验时可加管理员鉴权） */
+/** 手动标记订单已支付（开发/运营用，子订单 id 传 orderId） */
 router.post('/mark-paid', requireAuth, async (req, res) => {
-  const orderId = (req.body && req.body.orderId) ? String(req.body.orderId).trim() : '';
-  if (!orderId) {
+  const subId = (req.body && req.body.orderId) ? String(req.body.orderId).trim() : '';
+  if (!subId) {
     return res.status(400).json({
       success: false,
-      message: '请传入 orderId'
+      message: '请传入 orderId（子订单 id）'
     });
   }
   try {
-    let list = await loadSubscriptions();
-    const idx = list.findIndex(s => s.id === orderId);
+    const [orders, list] = await Promise.all([loadOrders(), loadSubscriptions()]);
+    const idx = list.findIndex(s => s.id === subId);
     if (idx === -1) {
       return res.status(404).json({
         success: false,
         message: '订单不存在'
       });
     }
-    const order = list[idx];
-    if (order.userId !== req.user.id) {
+    const sub = list[idx];
+    if (sub.userId !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: '只能标记自己的订单'
       });
     }
-    if (order.payStatus === 'paid') {
+    if (sub.payStatus === 'paid') {
       return res.json({
         success: true,
-        data: order,
+        data: sub,
         message: '订单已是已支付状态'
       });
     }
-    const config = PLANS[order.plan];
+    const config = PLANS[sub.plan];
     if (!config) {
       return res.status(400).json({
         success: false,
@@ -230,15 +258,29 @@ router.post('/mark-paid', requireAuth, async (req, res) => {
     }
     const now = new Date();
     const paidAt = now.toISOString();
-    const expireAt = computeNewExpireAt(list, order.userId, order.id, now, config.days);
+    let master = orders.find(o => o.userId === sub.userId);
+    if (!master) {
+      const masterId = nextMasterOrderId(orders);
+      const orderNo = nextOrderNo(orders);
+      const iso = now.toISOString();
+      master = { id: masterId, orderNo, userId: sub.userId, expireAt: null, createdAt: iso, updatedAt: iso };
+      orders.push(master);
+    }
+    const { startAt, expireAt } = computeSubPeriod(master, now, config.days);
     list[idx] = {
-      ...order,
+      ...sub,
+      orderId: master.id,
       payStatus: 'paid',
       paidAt,
+      startAt,
       expireAt,
       payer: '客户'
     };
-    await saveSubscriptions(list);
+    const oIdx = orders.findIndex(o => o.userId === sub.userId);
+    if (oIdx >= 0) {
+      orders[oIdx] = { ...orders[oIdx], expireAt, updatedAt: paidAt };
+    }
+    await Promise.all([saveOrders(orders), saveSubscriptions(list)]);
     res.json({
       success: true,
       data: list[idx],
@@ -253,24 +295,23 @@ router.post('/mark-paid', requireAuth, async (req, res) => {
   }
 });
 
-/** 我的订单与订阅状态 */
+/** 我的订单与订阅状态（子订单列表 + 总订单过期时间） */
 router.get('/my', requireAuth, async (req, res) => {
   try {
-    const list = await loadSubscriptions();
-    const myOrders = list
+    const [orders, list] = await Promise.all([loadOrders(), loadSubscriptions()]);
+    const mySubs = list
       .filter(s => s.userId === req.user.id)
       .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
-    const now = new Date().toISOString();
-    const active = myOrders
-      .filter(s => s.payStatus === 'paid' && s.expireAt > now)
-      .sort((a, b) => (b.expireAt > a.expireAt ? 1 : -1));
-    const expireAt = active.length > 0 ? active[0].expireAt : null;
+    const master = orders.find(o => o.userId === req.user.id);
+    const expireAt = master && master.expireAt && master.expireAt > new Date().toISOString()
+      ? master.expireAt
+      : null;
     res.json({
       success: true,
       data: {
         subscriptionExpireAt: expireAt,
         hasActiveSubscription: !!expireAt,
-        orders: myOrders
+        orders: mySubs
       }
     });
   } catch (err) {
