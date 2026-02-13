@@ -14,6 +14,7 @@ import { BEIJING_DISTRICTS } from './constants/districts.js';
 import authRouter from './routes/auth.js';
 import subscriptionRouter from './routes/subscription.js';
 import adminAuthRouter from './routes/adminAuth.js';
+import adminUsersRouter from './routes/adminUsers.js';
 import { requireAuth, requireSubscription } from './middleware/auth.js';
 import { requireAdminAuth } from './middleware/requireAdminAuth.js';
 
@@ -37,6 +38,8 @@ app.use('/api/auth', authRouter);
 app.use('/api/subscription', subscriptionRouter);
 /** 管理端登录（无需 token） */
 app.use('/api/admin/auth', adminAuthRouter);
+/** 管理端用户与续费（需 adminToken） */
+app.use('/api/admin/users', requireAdminAuth, adminUsersRouter);
 
 /** 文件上传：内存存储，供 COS 上传使用 */
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });

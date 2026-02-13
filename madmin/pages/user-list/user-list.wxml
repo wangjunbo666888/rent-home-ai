@@ -1,0 +1,61 @@
+<view class="container page-list">
+  <view wx:if="{{error}}" class="error-msg">{{error}}</view>
+
+  <view class="search-bar">
+    <view class="search-row-inline">
+      <text class="search-label">手机号</text>
+      <input class="search-input" placeholder="输入手机号筛选" value="{{searchPhone}}" bindinput="onSearchPhoneInput" />
+      <button class="btn btn-primary btn-sm" bindtap="onSearch">查询</button>
+      <button class="btn btn-secondary btn-sm" bindtap="onResetSearch">重置</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <view class="summary">共 {{total}} 条，每页 {{pageSize}} 条</view>
+
+    <view class="table-wrap" wx:if="{{list && list.length > 0}}">
+      <view class="table-container">
+        <view class="table-fixed">
+          <view class="table-head table-fixed-head">
+            <text class="col col-phone">手机号</text>
+          </view>
+          <view class="table-fixed-body">
+            <view class="table-row table-fixed-row" wx:for="{{list}}" wx:key="id">
+              <text class="col col-phone">{{item.phone}}</text>
+            </view>
+          </view>
+        </view>
+        <scroll-view scroll-x class="table-scroll" show-scrollbar="{{true}}">
+          <view class="user-table">
+            <view class="table-head table-scroll-head">
+              <text class="col col-date">注册时间</text>
+              <text class="col col-date">到期时间</text>
+              <text class="col col-actions">操作</text>
+            </view>
+            <view class="table-scroll-body">
+              <view class="table-row table-scroll-row" wx:for="{{list}}" wx:key="id">
+                <text class="col col-date">{{item.createdAtText}}</text>
+                <text class="col col-date">{{item.expireAtText}}</text>
+                <view class="col col-actions">
+                  <text class="link-btn" data-id="{{item.id}}" bindtap="onPurchaseRecord">购买记录({{item.subscriptionCount || 0}})</text>
+                  <text class="link-btn" data-id="{{item.id}}" data-phone="{{item.phone}}" bindtap="onRenew">续费</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view wx:else class="empty-msg">{{searchPhone ? '无匹配结果' : '暂无用户数据'}}</view>
+
+    <view class="pagination" wx:if="{{total > 0}}">
+      <button class="btn btn-page" disabled="{{currentPage <= 1}}" bindtap="goFirst">首页</button>
+      <button class="btn btn-page" disabled="{{currentPage <= 1}}" bindtap="goPrev">上一页</button>
+      <text class="page-info">第 {{currentPage}}/{{totalPages}} 页</text>
+      <button class="btn btn-page" disabled="{{currentPage >= totalPages}}" bindtap="goNext">下一页</button>
+    </view>
+  </block>
+</view>

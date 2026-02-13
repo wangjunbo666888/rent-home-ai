@@ -107,6 +107,41 @@ function uploadVideo(filePath, options = {}) {
   return uploadFile(filePath, 'video', extra);
 }
 
+const USERS_BASE = '/api/admin/users';
+
+/**
+ * 管理端 - 用户列表（手机号筛选、分页）
+ * @param {Object} params - { phone?, page?, pageSize? }
+ * @returns {Promise<{ success: boolean, data: Array, total: number }>}
+ */
+function getAdminUserList(params = {}) {
+  const parts = [];
+  if (params.phone != null && params.phone !== '') parts.push('phone=' + encodeURIComponent(params.phone));
+  if (params.page != null) parts.push('page=' + encodeURIComponent(String(params.page)));
+  if (params.pageSize != null) parts.push('pageSize=' + encodeURIComponent(String(params.pageSize)));
+  const query = parts.join('&');
+  return get(query ? USERS_BASE + '?' + query : USERS_BASE);
+}
+
+/**
+ * 管理端 - 某用户购买记录
+ * @param {string} userId - 用户 ID
+ * @returns {Promise<{ success: boolean, data: { user, list } }>}
+ */
+function getAdminUserSubscriptions(userId) {
+  return get(`${USERS_BASE}/${userId}/subscriptions`);
+}
+
+/**
+ * 管理端 - 为某用户续费
+ * @param {string} userId - 用户 ID
+ * @param {Object} data - { plan: 'month'|'quarter', amount?, paidAt? }
+ * @returns {Promise<{ success: boolean, data: Object }>}
+ */
+function postAdminRenew(userId, data) {
+  return post(`${USERS_BASE}/${userId}/renew`, data);
+}
+
 module.exports = {
   getApartmentList,
   getApartmentDetail,
@@ -117,5 +152,8 @@ module.exports = {
   getDistricts,
   suggestion,
   uploadImage,
-  uploadVideo
+  uploadVideo,
+  getAdminUserList,
+  getAdminUserSubscriptions,
+  postAdminRenew
 };

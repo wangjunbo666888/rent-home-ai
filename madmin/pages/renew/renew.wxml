@@ -1,0 +1,24 @@
+<view class="container">
+  <view wx:if="{{userPhone}}" class="form-row">
+    <text class="form-label">用户手机号</text>
+    <text class="form-value">{{userPhone}}</text>
+  </view>
+
+  <view class="form-row">
+    <text class="form-label">套餐</text>
+    <picker mode="selector" range="{{plans}}" range-key="label" value="{{planIndex}}" bindchange="onPlanChange">
+      <view class="form-picker">{{plans[planIndex].label}}</view>
+    </picker>
+  </view>
+
+  <view class="form-row">
+    <text class="form-label">实付金额</text>
+    <text class="form-value form-hint">0 元（管理员续费无需支付）</text>
+  </view>
+
+  <view wx:if="{{error}}" class="error-msg">{{error}}</view>
+
+  <button class="btn btn-primary" style="margin-top: 32rpx;" disabled="{{submitting}}" bindtap="onSubmit">
+    {{submitting ? '提交中...' : '确认续费'}}
+  </button>
+</view>

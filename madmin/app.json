@@ -2,14 +2,27 @@
   "pages": [
     "pages/login/login",
     "pages/list/list",
+    "pages/user-list/user-list",
     "pages/detail/detail",
-    "pages/form/form"
+    "pages/form/form",
+    "pages/user-subscriptions/user-subscriptions",
+    "pages/renew/renew"
   ],
   "window": {
     "navigationBarTitleText": "公寓管理",
     "navigationBarBackgroundColor": "#1989fa",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#1989fa",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/list/list", "text": "首页", "iconPath": "images/tab-home.png", "selectedIconPath": "images/tab-home-active.png" },
+      { "pagePath": "pages/user-list/user-list", "text": "人员管理", "iconPath": "images/tab-users.png", "selectedIconPath": "images/tab-users-active.png" }
+    ]
   },
   "sitemapLocation": "sitemap.json"
 }

@@ -1,0 +1,99 @@
+.user-info {
+  background: #fff;
+  padding: 24rpx 32rpx;
+  border-radius: 12rpx;
+  margin-bottom: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.sub-list {
+  background: #fff;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.sub-container {
+  display: flex;
+  width: 100%;
+}
+
+.sub-fixed {
+  width: 200rpx;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1rpx solid #eee;
+}
+
+.sub-fixed-head,
+.sub-fixed-row {
+  display: flex;
+  border-bottom: 1rpx solid #eee;
+  min-height: 72rpx;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.sub-fixed-head {
+  background: #f8f8f8;
+  font-weight: bold;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.sub-scroll {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.sub-table {
+  min-width: 920rpx;
+  display: inline-block;
+}
+
+.sub-scroll-head,
+.sub-scroll-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1rpx solid #eee;
+  min-height: 72rpx;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+}
+
+.sub-scroll-head {
+  background: #f8f8f8;
+  font-weight: bold;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.sub-scroll-row {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.sub-list .col {
+  padding: 20rpx 12rpx;
+  flex-shrink: 0;
+}
+
+.sub-list .col-id { width: 200rpx; }
+.sub-list .col-plan { width: 80rpx; }
+.sub-list .col-date { width: 260rpx; }
+.sub-list .col-amount { width: 120rpx; }
+.sub-list .col-payer { width: 100rpx; }
+.sub-list .col-status { width: 100rpx; }
+
+.loading-wrap {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 60rpx 0;
+  color: #999;
+}

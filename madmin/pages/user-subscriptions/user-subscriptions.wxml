@@ -1,0 +1,47 @@
+<view class="container">
+  <view wx:if="{{error}}" class="error-msg">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <view wx:if="{{user}}" class="user-info">手机号：{{user.phone}}</view>
+
+    <view class="sub-list" wx:if="{{list && list.length > 0}}">
+      <view class="sub-container">
+        <view class="sub-fixed">
+          <view class="sub-head sub-fixed-head">
+            <text class="col col-id">订单号</text>
+          </view>
+          <view class="sub-fixed-body">
+            <view class="sub-row sub-fixed-row" wx:for="{{list}}" wx:key="id">
+              <text class="col col-id">{{item.id}}</text>
+            </view>
+          </view>
+        </view>
+        <scroll-view scroll-x class="sub-scroll" show-scrollbar="{{true}}">
+          <view class="sub-table">
+            <view class="sub-head sub-scroll-head">
+              <text class="col col-plan">套餐</text>
+              <text class="col col-date">到期时间</text>
+              <text class="col col-amount">金额(元)</text>
+              <text class="col col-payer">支付人</text>
+              <text class="col col-status">状态</text>
+              <text class="col col-date">支付时间</text>
+            </view>
+            <view class="sub-scroll-body">
+              <view class="sub-row sub-scroll-row" wx:for="{{list}}" wx:key="id">
+                <text class="col col-plan">{{item.plan === 'quarter' ? '季度' : (item.plan === 'month' ? '月度' : item.plan)}}</text>
+                <text class="col col-date">{{item.expireAtText}}</text>
+                <text class="col col-amount">{{item.amountYuan}}</text>
+                <text class="col col-payer">{{item.payerText}}</text>
+                <text class="col col-status">{{item.payStatus === 'paid' ? '已支付' : '待支付'}}</text>
+                <text class="col col-date">{{item.paidAtText}}</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view wx:else class="empty-msg">暂无购买记录</view>
+  </block>
+</view>

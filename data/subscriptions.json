@@ -53,5 +53,29 @@
     "expireAt": "2026-07-13T08:08:18.444Z",
     "createdAt": "2026-02-13T08:08:40.204Z",
     "wxTransactionId": null
+  },
+  {
+    "id": "SUB000006",
+    "userId": "U0001",
+    "plan": "month",
+    "amount": 0,
+    "payStatus": "paid",
+    "paidAt": "2026-02-13T14:11:08.123Z",
+    "expireAt": "2026-04-07T03:57:57.565Z",
+    "createdAt": "2026-02-13T14:11:08.123Z",
+    "wxTransactionId": null,
+    "payer": "管理员"
+  },
+  {
+    "id": "SUB000007",
+    "userId": "U0002",
+    "plan": "quarter",
+    "amount": 0,
+    "payStatus": "paid",
+    "paidAt": "2026-02-13T14:19:28.947Z",
+    "expireAt": "2026-08-05T04:06:31.819Z",
+    "createdAt": "2026-02-13T14:19:28.947Z",
+    "wxTransactionId": null,
+    "payer": "管理员"
   }
 ]

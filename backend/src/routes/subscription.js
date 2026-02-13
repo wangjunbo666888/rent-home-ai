@@ -178,7 +178,8 @@ router.post('/pay-notify', async (req, res) => {
       payStatus: 'paid',
       paidAt,
       expireAt,
-      wxTransactionId: transaction_id
+      wxTransactionId: transaction_id,
+      payer: '客户'
     };
     await saveSubscriptions(list);
     res.status(200).json({ code: 'SUCCESS', message: '成功' });
@@ -234,7 +235,8 @@ router.post('/mark-paid', requireAuth, async (req, res) => {
       ...order,
       payStatus: 'paid',
       paidAt,
-      expireAt
+      expireAt,
+      payer: '客户'
     };
     await saveSubscriptions(list);
     res.json({
