@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import multer from 'multer';
 import { matchApartments } from './services/matchingService.js';
 import { loadApartments, saveApartments } from './utils/dataLoader.js';
-import { getSuggestion } from './utils/tencentMapApi.js';
+import { getSuggestion, getCoordForAddress } from './utils/tencentMapApi.js';
 import { uploadToCos } from './utils/cosUpload.js';
 import { BEIJING_DISTRICTS } from './constants/districts.js';
 import authRouter from './routes/auth.js';
@@ -136,6 +136,28 @@ app.get('/api/suggestion', requireAuth, requireSubscription, async (req, res) =>
       success: false,
       message: error.message || '输入提示请求失败',
       data: []
+    });
+  }
+});
+
+/**
+ * 预取上班地址地理编码（做法 A）
+ * 用户输入/选择上班地址后调用，结果写入缓存，匹配时 getCoordForAddress 会命中缓存，减少匹配时计算
+ * GET /api/geocode?address=北京市朝阳区xxx（需登录）
+ */
+app.get('/api/geocode', requireAuth, async (req, res) => {
+  try {
+    const address = (req.query.address != null && req.query.address !== '') ? String(req.query.address).trim() : '';
+    if (!address) {
+      return res.status(400).json({ success: false, message: '请提供 address 参数' });
+    }
+    const coord = await getCoordForAddress(address);
+    res.json({ success: true, lat: coord.lat, lng: coord.lng });
+  } catch (error) {
+    console.error('❌ 地理编码预取失败:', error.message);
+    res.status(400).json({
+      success: false,
+      message: error.message || '地址解析失败'
     });
   }
 });
@@ -320,6 +342,16 @@ app.post('/api/admin/apartments', requireAdminAuth, async (req, res) => {
       images: Array.isArray(body.images) ? body.images : [],
       videos: normalizedVideos
     };
+    if (newItem.address) {
+      try {
+        const coord = await getCoordForAddress(newItem.address);
+        newItem.lat = coord.lat;
+        newItem.lng = coord.lng;
+        console.log(`📍 公寓「${newItem.name}」地理编码已保存: (${coord.lat}, ${coord.lng})`);
+      } catch (e) {
+        console.warn('⚠️ 公寓地址地理编码失败，未保存 lat/lng:', e.message);
+      }
+    }
     apartmentsData.push(newItem);
     await saveApartments(apartmentsData);
     await reloadApartments();
@@ -372,6 +404,18 @@ app.put('/api/admin/apartments/:id', requireAdminAuth, async (req, res) => {
       images: Array.isArray(body.images) ? body.images : (apartmentsData[idx].images || []),
       videos: normalizedVideos
     };
+    if (updated.address && body.address !== undefined) {
+      try {
+        const coord = await getCoordForAddress(updated.address);
+        updated.lat = coord.lat;
+        updated.lng = coord.lng;
+        console.log(`📍 公寓「${updated.name}」地理编码已更新: (${coord.lat}, ${coord.lng})`);
+      } catch (e) {
+        console.warn('⚠️ 公寓地址地理编码失败，已清除 lat/lng:', e.message);
+        updated.lat = undefined;
+        updated.lng = undefined;
+      }
+    }
     apartmentsData[idx] = updated;
     await saveApartments(apartmentsData);
     await reloadApartments();

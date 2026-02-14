@@ -9,10 +9,35 @@ dotenv.config();
 const TENCENT_MAP_KEY = process.env.TENCENT_MAP_KEY;
 const API_BASE_URL = 'https://apis.map.qq.com/ws';
 
+/**
+ * 通勤方式切换阈值（公里）：直线距离 ≤ 该值时使用骑行，否则使用公交
+ * 可通过环境变量 COMMUTE_CYCLING_THRESHOLD_KM 配置，默认 1.2
+ */
+const COMMUTE_CYCLING_THRESHOLD_KM = parseFloat(process.env.COMMUTE_CYCLING_THRESHOLD_KM || '1.2', 10) || 1.2;
+
 // 地址坐标缓存（避免重复调用API）
 const geocodeCache = new Map();
 // 路线规划缓存（避免重复计算相同路线）
 const routeCache = new Map();
+
+/**
+ * Haversine 直线距离（公里）
+ * @param {number} lat1
+ * @param {number} lng1
+ * @param {number} lat2
+ * @param {number} lng2
+ * @returns {number}
+ */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 /**
  * 获取「当天北京时间中午12点」的 Unix 时间戳（秒）
@@ -30,7 +55,7 @@ function getBeijingNoonTimestamp() {
 }
 
 /**
- * 计算通勤时间（公共交通），并返回起终点坐标供地图打点使用
+ * 计算通勤时间：直线距离 ≤ 阈值时用骑行，否则用公交；返回起终点坐标供地图打点
  * @param {string} from - 起点地址
  * @param {string} to - 终点地址
  * @returns {Promise<Object>} 通勤信息 { duration, distance, route, fromCoord, toCoord }
@@ -40,20 +65,10 @@ export async function calculateCommuteTime(from, to) {
     throw new Error('腾讯地图API密钥未配置，请在.env文件中设置TENCENT_MAP_KEY');
   }
 
-  try {
-    // 检查路线缓存（修改出发时间或修复通勤逻辑后建议重启后端以清空旧缓存）
-    const routeKey = `${from}|||${to}`;
-    if (routeCache.has(routeKey)) {
-      console.log('📦 使用缓存的路线数据');
-      const cached = routeCache.get(routeKey);
-      if (cached.fromCoord && cached.toCoord) return cached;
-      const fromCoord = await geocodeWithCache(from);
-      const toCoord = await geocodeWithCache(to);
-      const result = { ...cached, fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng }, toCoord: { lat: toCoord.lat, lng: toCoord.lng } };
-      routeCache.set(routeKey, result);
-      return result;
-    }
+  const cyclingKey = `cycling:${from}|||${to}`;
+  const transitKey = `${from}|||${to}`;
 
+  try {
     // 第一步：地理编码（地址转坐标）- 使用缓存
     const fromCoord = await geocodeWithCache(from);
     const toCoord = await geocodeWithCache(to);
@@ -62,60 +77,123 @@ export async function calculateCommuteTime(from, to) {
       throw new Error('地址解析失败，请检查地址是否正确');
     }
 
-    // 第二步：路线规划（公共交通）。固定出发时间为北京时间中午12点，避免深夜公交停运导致路线异常（如通勤240分钟）
-    const departureTime = getBeijingNoonTimestamp();
-    const departureDate = new Date(departureTime * 1000);
-    console.log(`🕐 公交路线请求: departure_time=${departureTime} (北京时间 ${departureDate.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}), from=${from.slice(0, 24)}... → to=${to.slice(0, 24)}...`);
-    console.log(`📍 起终点坐标: from(${fromCoord.lat},${fromCoord.lng}) → to(${toCoord.lat},${toCoord.lng})`);
+    const straightLineKm = haversineKm(fromCoord.lat, fromCoord.lng, toCoord.lat, toCoord.lng);
+    const useCycling = straightLineKm <= COMMUTE_CYCLING_THRESHOLD_KM;
 
-    const routeUrl = `${API_BASE_URL}/direction/v1/transit`;
-    const routeResponse = await axios.get(routeUrl, {
-      params: {
-        key: TENCENT_MAP_KEY,
-        from: `${fromCoord.lat},${fromCoord.lng}`,
-        to: `${toCoord.lat},${toCoord.lng}`,
-        output: 'json',
-        departure_time: departureTime
+    if (useCycling) {
+      // 直线距离 ≤ 阈值：骑行
+      if (routeCache.has(cyclingKey)) {
+        console.log('📦 使用缓存的骑行路线数据');
+        const cached = routeCache.get(cyclingKey);
+        if (cached.fromCoord && cached.toCoord) return cached;
+        const result = { ...cached, fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng }, toCoord: { lat: toCoord.lat, lng: toCoord.lng } };
+        routeCache.set(cyclingKey, result);
+        return result;
       }
-    });
-
-    if (routeResponse.data.status !== 0) {
-      throw new Error(`路线规划失败: ${routeResponse.data.message || '未知错误'}`);
+      const result = await callBicyclingApi(fromCoord, toCoord, from, to);
+      routeCache.set(cyclingKey, result);
+      console.log('💾 已缓存骑行路线数据');
+      return result;
     }
 
-    const route = routeResponse.data.result?.routes?.[0];
-    if (!route) {
-      throw new Error('未找到合适的路线');
+    // 直线距离 > 阈值：公交
+    if (routeCache.has(transitKey)) {
+      console.log('📦 使用缓存的公交路线数据');
+      const cached = routeCache.get(transitKey);
+      if (cached.fromCoord && cached.toCoord) return cached;
+      const result = { ...cached, fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng }, toCoord: { lat: toCoord.lat, lng: toCoord.lng } };
+      routeCache.set(transitKey, result);
+      return result;
     }
-
-    /**
-     * 腾讯地图 API 文档：route.duration 单位为「分钟」，route.distance 单位为「米」
-     */
-    const totalDuration = Math.round(Number(route.duration) || 0);
-    const totalDistance = Number(route.distance) || 0;
-    console.log(`📊 公交接口返回: duration=${route.duration} → ${totalDuration}分钟, distance=${route.distance} → ${totalDistance}米`);
-
-    // 生成路线描述
-    const routeDescription = generateRouteDescription(route);
-
-    const result = {
-      duration: totalDuration,
-      distance: totalDistance,
-      route: routeDescription,
-      fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng },
-      toCoord: { lat: toCoord.lat, lng: toCoord.lng }
-    };
-
-    // 缓存结果
-    routeCache.set(routeKey, result);
-    console.log('💾 已缓存路线数据');
-
+    const result = await callTransitApi(fromCoord, toCoord, from, to);
+    routeCache.set(transitKey, result);
+    console.log('💾 已缓存公交路线数据');
     return result;
 
   } catch (error) {
     console.error('计算通勤时间错误:', error.message);
     throw new Error(`通勤时间计算失败: ${error.message}`);
   }
+}
+
+/**
+ * 调用腾讯地图骑行路线规划
+ * @param {Object} fromCoord - { lat, lng }
+ * @param {Object} toCoord - { lat, lng }
+ * @param {string} from - 起点地址（日志用）
+ * @param {string} to - 终点地址（日志用）
+ * @returns {Promise<Object>} { duration, distance, route, fromCoord, toCoord }
+ */
+async function callBicyclingApi(fromCoord, toCoord, from, to) {
+  console.log(`🚴 骑行路线请求（直线 ${(haversineKm(fromCoord.lat, fromCoord.lng, toCoord.lat, toCoord.lng) * 1000).toFixed(0)}m ≤ ${COMMUTE_CYCLING_THRESHOLD_KM}km）: ${from.slice(0, 24)}... → ${to.slice(0, 24)}...`);
+  const url = `${API_BASE_URL}/direction/v1/bicycling/`;
+  const res = await axios.get(url, {
+    params: {
+      key: TENCENT_MAP_KEY,
+      from: `${fromCoord.lat},${fromCoord.lng}`,
+      to: `${toCoord.lat},${toCoord.lng}`,
+      output: 'json'
+    }
+  });
+  if (res.data.status !== 0) {
+    throw new Error(`骑行路线规划失败: ${res.data.message || '未知错误'}`);
+  }
+  const route = res.data.result?.routes?.[0];
+  if (!route) {
+    throw new Error('未找到合适的骑行路线');
+  }
+  const duration = Math.round(Number(route.duration) || 0);
+  const distance = Number(route.distance) || 0;
+  console.log(`📊 骑行接口返回: duration=${duration}分钟, distance=${distance}米`);
+  return {
+    duration,
+    distance,
+    route: `骑行约${duration}分钟`,
+    fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng },
+    toCoord: { lat: toCoord.lat, lng: toCoord.lng }
+  };
+}
+
+/**
+ * 调用腾讯地图公交路线规划
+ * @param {Object} fromCoord - { lat, lng }
+ * @param {Object} toCoord - { lat, lng }
+ * @param {string} from - 起点地址（日志用）
+ * @param {string} to - 终点地址（日志用）
+ * @returns {Promise<Object>} { duration, distance, route, fromCoord, toCoord }
+ */
+async function callTransitApi(fromCoord, toCoord, from, to) {
+  const departureTime = getBeijingNoonTimestamp();
+  const departureDate = new Date(departureTime * 1000);
+  console.log(`🕐 公交路线请求: departure_time=${departureTime} (北京时间 ${departureDate.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}), from=${from.slice(0, 24)}... → to=${to.slice(0, 24)}...`);
+  const routeUrl = `${API_BASE_URL}/direction/v1/transit`;
+  const routeResponse = await axios.get(routeUrl, {
+    params: {
+      key: TENCENT_MAP_KEY,
+      from: `${fromCoord.lat},${fromCoord.lng}`,
+      to: `${toCoord.lat},${toCoord.lng}`,
+      output: 'json',
+      departure_time: departureTime
+    }
+  });
+  if (routeResponse.data.status !== 0) {
+    throw new Error(`路线规划失败: ${routeResponse.data.message || '未知错误'}`);
+  }
+  const route = routeResponse.data.result?.routes?.[0];
+  if (!route) {
+    throw new Error('未找到合适的路线');
+  }
+  const totalDuration = Math.round(Number(route.duration) || 0);
+  const totalDistance = Number(route.distance) || 0;
+  console.log(`📊 公交接口返回: duration=${totalDuration}分钟, distance=${totalDistance}米`);
+  const routeDescription = generateRouteDescription(route);
+  return {
+    duration: totalDuration,
+    distance: totalDistance,
+    route: routeDescription,
+    fromCoord: { lat: fromCoord.lat, lng: fromCoord.lng },
+    toCoord: { lat: toCoord.lat, lng: toCoord.lng }
+  };
 }
 
 /**
@@ -138,6 +216,22 @@ async function geocodeWithCache(address) {
   console.log(`💾 已缓存地理编码: ${address}`);
 
   return coord;
+}
+
+/**
+ * 地理编码（对外接口，带缓存）
+ * 供预取上班地址、公寓保存坐标等调用，结果会写入缓存，匹配时可直接命中
+ * @param {string} address - 地址
+ * @returns {Promise<{ lat: number, lng: number }>}
+ */
+export async function getCoordForAddress(address) {
+  if (!TENCENT_MAP_KEY) {
+    throw new Error('腾讯地图API密钥未配置，请在.env文件中设置TENCENT_MAP_KEY');
+  }
+  if (!address || typeof address !== 'string' || !address.trim()) {
+    throw new Error('地址不能为空');
+  }
+  return geocodeWithCache(address.trim());
 }
 
 /**

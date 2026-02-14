@@ -25,6 +25,20 @@ function suggestion(keyword) {
   return get(`/api/suggestion?${q}`);
 }
 
+/**
+ * 预取上班地址地理编码（做法 A）
+ * 选择上班地址后调用，后端缓存该地址坐标，匹配时直接命中缓存，减少计算
+ * @param {string} address - 完整上班地址
+ * @returns {Promise<{ success: boolean, lat: number, lng: number }>}
+ */
+function getGeocode(address) {
+  if (!address || typeof address !== 'string' || !address.trim()) {
+    return Promise.reject(new Error('地址不能为空'));
+  }
+  const q = `address=${encodeURIComponent(address.trim())}`;
+  return get(`/api/geocode?${q}`);
+}
+
 /** ---------- 登录 ---------- */
 
 /**
@@ -88,6 +102,7 @@ function getMySubscription() {
 module.exports = {
   match,
   suggestion,
+  getGeocode,
   sendCode,
   login,
   getProfile,

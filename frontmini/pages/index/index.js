@@ -79,7 +79,11 @@ Page({
     const item = list[index];
     if (!item) return;
     const full = (item.address && item.address.trim()) ? item.address.trim() : (item.title || '').trim();
-    if (full) this.setData({ workAddress: full, suggestions: [], suggestionOpen: false });
+    if (full) {
+      this.setData({ workAddress: full, suggestions: [], suggestionOpen: false });
+      // 预取上班地址地理编码，匹配时后端缓存命中，减少计算
+      api.getGeocode(full).catch(() => {});
+    }
   },
 
   /** 通勤时长滑块（15–120 分钟） */

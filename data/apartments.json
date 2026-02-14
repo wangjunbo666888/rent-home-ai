@@ -4,7 +4,7 @@
     "name": "百思特公寓",
     "minPrice": 2500,
     "maxPrice": 3500,
-    "address": "北京市朝阳区化工东里3号",
+    "address": "北京市朝阳区化工东里3号(糖业烟酒集团有限公司院内)",
     "district": "朝阳区",
     "pet": "禁养",
     "layoutType": "开间",
@@ -24,16 +24,20 @@
       {
         "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "title": "公寓实拍",
-        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。"
+        "description": "本视频为实地拍摄，展示一居室户型从进门到卧室、卫生间的全貌，约 2 分钟。",
+        "layoutType": "开间",
+        "price": 0
       }
-    ]
+    ],
+    "lat": 39.864212,
+    "lng": 116.52087
   },
   {
     "id": "APT0002",
     "name": "小鲸鱼",
     "minPrice": 2400,
     "maxPrice": 2800,
-    "address": "北京市朝阳区化工路甲5号附近603文化产业园",
+    "address": "北京市朝阳区化工路甲5号附近",
     "district": "朝阳区",
     "pet": "禁养",
     "layoutType": "开间",
@@ -53,9 +57,13 @@
       {
         "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
         "title": "环境介绍",
-        "description": "园区环境与周边配套介绍。"
+        "description": "园区环境与周边配套介绍。",
+        "layoutType": "开间",
+        "price": 0
       }
-    ]
+    ],
+    "lat": 39.862032,
+    "lng": 116.522482
   },
   {
     "id": "APT0003",

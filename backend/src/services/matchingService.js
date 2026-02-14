@@ -1,8 +1,30 @@
 /**
  * 租房匹配服务
- * 根据上班地点、通勤时长和预算匹配公寓
+ * 根据上班地点、通勤时长和预算匹配公寓；预算 + 直线距离粗筛后再调公交/骑行接口
  */
-import { calculateCommuteTime } from '../utils/tencentMapApi.js';
+import { calculateCommuteTime, getCoordForAddress } from '../utils/tencentMapApi.js';
+
+/** 直线距离粗筛：每分钟通勤对应的最大直线距离（公里），从 .env 的 KM_PER_COMMUTE_MINUTE 读取，默认 0.25 */
+const KM_PER_COMMUTE_MINUTE = parseFloat(process.env.KM_PER_COMMUTE_MINUTE, 10) || 0.25;
+
+/**
+ * Haversine 直线距离（公里）
+ * @param {number} lat1
+ * @param {number} lng1
+ * @param {number} lat2
+ * @param {number} lng2
+ * @returns {number}
+ */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 /**
  * 匹配公寓
@@ -11,35 +33,67 @@ import { calculateCommuteTime } from '../utils/tencentMapApi.js';
  * @param {number} params.commuteTime - 最大通勤时长（分钟）
  * @param {number} params.budget - 预算（元）
  * @param {Array} params.apartments - 公寓数据列表
- * @returns {Promise<Array>} 匹配结果列表
+ * @returns {Promise<{ results: Array, workLocation: Object }>}
  */
 export async function matchApartments({ workAddress, commuteTime, budget, apartments }) {
   const results = [];
   let workLocation = null;
-  let processedCount = 0;
 
-  console.log(`📊 开始处理 ${apartments.length} 个公寓...`);
+  // 1) 预算筛选
+  const byBudget = apartments.filter(a => a.minPrice <= budget);
+  console.log(`📊 预算筛选后剩余 ${byBudget.length}/${apartments.length} 个公寓`);
 
-  // 遍历所有公寓，计算通勤时间
-  for (const apartment of apartments) {
-    processedCount++;
-    
-    // 预算筛选：使用最低月租金
-    if (apartment.minPrice > budget) {
-      console.log(`⏭️  [${processedCount}/${apartments.length}] ${apartment.name} - 价格超出预算，跳过`);
+  if (byBudget.length === 0) {
+    return { results, workLocation };
+  }
+
+  // 2) 上班地一次地理编码
+  let workCoord;
+  try {
+    workCoord = await getCoordForAddress(workAddress);
+  } catch (e) {
+    console.error('上班地址解析失败:', e.message);
+    throw new Error('上班地址解析失败，请检查地址是否正确');
+  }
+
+  // 3) 直线距离粗筛：只保留 straightKm <= commuteTime * KM_PER_COMMUTE_MINUTE 的公寓
+  const maxStraightKm = commuteTime * KM_PER_COMMUTE_MINUTE;
+  const candidates = [];
+  for (const apartment of byBudget) {
+    let lat;
+    let lng;
+    if (apartment.lat != null && apartment.lng != null && !Number.isNaN(apartment.lat) && !Number.isNaN(apartment.lng)) {
+      lat = Number(apartment.lat);
+      lng = Number(apartment.lng);
+    } else {
+      try {
+        const coord = await getCoordForAddress(apartment.address);
+        lat = coord.lat;
+        lng = coord.lng;
+      } catch (e) {
+        console.error(`公寓地址解析失败 ${apartment.name}:`, e.message);
+        continue;
+      }
+    }
+    const straightKm = haversineKm(lat, lng, workCoord.lat, workCoord.lng);
+    if (straightKm > maxStraightKm) {
+      console.log(`⏭️ 直线距离 ${straightKm.toFixed(1)}km > ${maxStraightKm.toFixed(1)}km，跳过: ${apartment.name}`);
       continue;
     }
+    candidates.push(apartment);
+  }
+  console.log(`📐 直线距离粗筛后剩余 ${candidates.length} 个候选，开始计算通勤（骑行/公交）`);
 
+  // 4) 仅对候选调用通勤接口（骑行或公交）
+  let processed = 0;
+  for (const apartment of candidates) {
+    processed++;
     try {
-      // 计算通勤时间（家→公司：from=公寓 to=上班地址，与用户「从家到公司」语义一致，避免部分路线接口返回异常长距离）
-      console.log(`🔄 [${processedCount}/${apartments.length}] 正在计算 ${apartment.name} 的通勤时间...`);
       const commuteInfo = await calculateCommuteTime(apartment.address, workAddress);
-      
-      // 通勤时间筛选。commuteInfo 为「公寓→上班」：fromCoord=公寓，toCoord=上班地点
+      if (!workLocation && commuteInfo.toCoord) {
+        workLocation = commuteInfo.toCoord;
+      }
       if (commuteInfo.duration <= commuteTime) {
-        if (!workLocation && commuteInfo.toCoord) {
-          workLocation = commuteInfo.toCoord;
-        }
         results.push({
           ...apartment,
           commuteTime: commuteInfo.duration,
@@ -49,21 +103,16 @@ export async function matchApartments({ workAddress, commuteTime, budget, apartm
           lat: commuteInfo.fromCoord?.lat,
           lng: commuteInfo.fromCoord?.lng
         });
-        console.log(`✅ [${processedCount}/${apartments.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，符合条件`);
+        console.log(`✅ [${processed}/${candidates.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，符合条件`);
       } else {
-        console.log(`⏭️  [${processedCount}/${apartments.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，超出要求，跳过`);
+        console.log(`⏭️ [${processed}/${candidates.length}] ${apartment.name} - 通勤${commuteInfo.duration}分钟，超出要求，跳过`);
       }
     } catch (error) {
-      console.error(`❌ [${processedCount}/${apartments.length}] ${apartment.name} - 计算失败:`, error.message);
-      // 继续处理下一个公寓
-      continue;
+      console.error(`❌ [${processed}/${candidates.length}] ${apartment.name} - 计算失败:`, error.message);
     }
-
-    // 添加延迟，避免「此key每秒请求量已达到上限」
     await new Promise(resolve => setTimeout(resolve, 400));
   }
 
-  // 排序：优先通勤时间短，其次价格低
   results.sort((a, b) => {
     if (a.commuteTime !== b.commuteTime) {
       return a.commuteTime - b.commuteTime;
